@@ -104,7 +104,7 @@ Initialized empty Git repository in /Users/michael/learngit/.git/
 //这样就建立了一个空的repo，并且gittest目录下会多一个名为".git ""的隐藏文件夹，这个目录是Git来跟踪管理版本库的，别乱改
 ```
 
-![屏幕截图 2021-09-10 203718](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 203718.png)
+![屏幕截图 2021-09-10 203718](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 203718.png)
 
 #### 把文件添加到版本库
 
@@ -127,7 +127,7 @@ $ git add readme.txt//执行完以后没有gitbash任何反馈，会另起一行
     Unix的哲学是“没有消息就是好消息”，说明添加成功。
 ```
 
-![屏幕截图 2021-09-10 204720](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 204720.png)
+![屏幕截图 2021-09-10 204720](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 204720.png)
 
 第二步，用命令`git commit`告诉Git，把文件提交到仓库：
 
@@ -185,7 +185,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
     //git status命令可以让我们时刻掌握仓库当前的状态，上面的命令输出告诉我们，readme.txt被修改过了，但还没有准备提交的修改。
 ```
 
-![屏幕截图 2021-09-10 211428](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 211428.png)
+![屏幕截图 2021-09-10 211428](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 211428.png)
 
 如果想看看具体修改了什么内容，用`git diff`这个命令看看：
 
@@ -195,9 +195,9 @@ $ git diff readme.txt
     //git diff顾名思义就是查看difference，显示的格式正是Unix通用的diff格式
 ```
 
-![屏幕截图 2021-09-10 211807](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 211807.png)
+![屏幕截图 2021-09-10 211807](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 211807.png)
 
-![屏幕截图 2021-09-10 212244](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 212244.png)
+![屏幕截图 2021-09-10 212244](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 212244.png)
 
 知道了对`readme.txt`作了什么修改后，再把它提交到仓库就放心多了，提交修改和提交新文件是一样的两步，第一步是`git add`：
 
@@ -233,7 +233,7 @@ nothing to commit, working tree clean
     //Git告诉我们当前没有需要提交的修改，而且，工作目录是干净（working tree clean）的。
 ```
 
-![屏幕截图 2021-09-10 212630](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 212630.png)
+![屏幕截图 2021-09-10 212630](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 212630.png)
 
 ### 版本回退
 
@@ -251,7 +251,7 @@ $ git log
     //如果无法操作，按q退出
 ```
 
-![屏幕截图 2021-09-10 220258](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 220258.png)
+![屏幕截图 2021-09-10 220258](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-10 220258.png)
 
 如果嫌输出信息太多，看得眼花缭乱的，可以试试加上`--pretty=oneline`参数：
 
@@ -274,7 +274,7 @@ $ git reset --hard HEAD^
 HEAD is now at 65f1809 changed 2 files
 ```
 
-![屏幕截图 2021-09-11 100250](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 100250.png)
+![屏幕截图 2021-09-11 100250](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 100250.png)
 
 还可以继续回退到上一个版本，不过如果想回去，怎么办？
 
@@ -296,7 +296,7 @@ $ git reset --hard 65f1809
 HEAD is now at 65f1809 changed 2 files
 ```
 
-![屏幕截图 2021-09-11 100812](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 100812.png)
+![屏幕截图 2021-09-11 100812](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 100812.png)
 
 ### 工作区与暂存区
 
@@ -310,7 +310,7 @@ HEAD is now at 65f1809 changed 2 files
 
 Git的版本库里存了很多东西，其中最重要的就是称为stage（或者叫index）的暂存区，还有Git为我们自动创建的第一个分支`master`，以及指向`master`的一个指针叫`HEAD`。
 
-![0](D:\Pictures Of Markdown\GIt使用手册\0.jpg)
+![0](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\0.jpg)
 
 分支和`HEAD`的概念我们以后再讲。
 
@@ -330,7 +330,7 @@ Git的版本库里存了很多东西，其中最重要的就是称为stage（或
 
 先用`git status`查看一下状态：
 
-![屏幕截图 2021-09-11 105257](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 105257.png)
+![屏幕截图 2021-09-11 105257](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 105257.png)
 
 Git非常清楚地告诉我们，`english.txt`被修改了，而`LICENSE`还从来没有被添加过，所以它的状态是`Untracked`。
 
@@ -338,11 +338,11 @@ Git非常清楚地告诉我们，`english.txt`被修改了，而`LICENSE`还从�
 
 license 因为先commit后再修改了再add了，所以显示为modified，而不是new file
 
-![屏幕截图 2021-09-11 105809](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 105809.png)
+![屏幕截图 2021-09-11 105809](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 105809.png)
 
 `git add`命令实际上就是把要提交的所有修改放到暂存区（Stage），然后，执行`git commit`就可以一次性把暂存区的所有修改提交到分支。
 
-![屏幕截图 2021-09-11 105505](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 105505.png)
+![屏幕截图 2021-09-11 105505](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 105505.png)
 
 再使用git status查看状态
 
@@ -350,7 +350,7 @@ license 因为先commit后再修改了再add了，所以显示为modified，而�
 git status
 ```
 
-![屏幕截图 2021-09-11 110114](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 110114.png)
+![屏幕截图 2021-09-11 110114](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 110114.png)
 
 现在暂存区没有任何内容，master分支新增了提交
 
@@ -444,7 +444,7 @@ git restore --staged fileName.txt
 git restore --source=HEAD --staged --worktree fileName.txt
 ```
 
-![](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 220735.png)
+![](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 220735.png)
 
 上图是add后如何撤销掉被add进暂存区的内容
 
@@ -469,7 +469,7 @@ $ rm test.txt
 
 这个时候，Git知道你删除了文件，因此，工作区和版本库就不一致了，`git status`命令会立刻告诉你哪些文件被删除了：
 
-![屏幕截图 2021-09-11 221515](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 221515.png)
+![屏幕截图 2021-09-11 221515](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 221515.png)
 
 现在你有两个选择，一是确实要从版本库中删除该文件，那就用命令`git rm`删掉，并且`git commit`：
 
@@ -487,7 +487,7 @@ $ git restore test.txt
 
 第一种：`git rm`删掉，并且`git commit`：
 
-![屏幕截图 2021-09-11 221913](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 221913.png)
+![屏幕截图 2021-09-11 221913](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 221913.png)
 
 命令`git rm`用于删除一个文件。如果一个文件已经被提交到版本库，那么你永远不用担心误删，但是要小心，你只能恢复文件到最新版本，你会丢失**最近一次提交后你修改的内容**。
 
@@ -507,7 +507,7 @@ Git是分布式版本控制系统，同一个Git仓库，可以分布到不同�
 
 第1步：创建SSH Key。在用户主目录下，看看有没有.ssh目录，如果有，再看看这个目录下有没有`id_rsa`和`id_rsa.pub`这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：
 
-![屏幕截图 2021-09-11 222704](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 222704.png)
+![屏幕截图 2021-09-11 222704](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 222704.png)
 
 ```java
 cd ~//进入用户主目录
@@ -518,7 +518,7 @@ $ ssh-keygen -t rsa -C "youremail@example.com"//创建ssh key
 
 可以在用户主目录里找到`.ssh`目录，里面有`id_rsa`和`id_rsa.pub`两个文件，这两个就是SSH Key的秘钥对，`id_rsa`是私钥，不能泄露出去，`id_rsa.pub`是公钥，可以放心地告诉任何人。
 
-![屏幕截图 2021-09-11 223230](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 223230.png)
+![屏幕截图 2021-09-11 223230](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 223230.png)
 
 第2步：登陆GitHub，找到account ===》SSH and GHG Keys，填上任意Title，在Key文本框里粘贴`id_rsa.pub`文件的内容
 
@@ -555,7 +555,7 @@ To https://github.com/CorneliaStreet1/test.git
 Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
 
-![屏幕截图 2021-09-11 225800](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 225800.png)
+![屏幕截图 2021-09-11 225800](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 225800.png)
 
 把本地库的内容推送到远程，用`git push`命令，实际上是把当前分支`master`推送到远程。
 
@@ -569,7 +569,7 @@ Branch 'main' set up to track remote branch 'main' from 'origin'.
 $ git push origin master//git上的建议好像不一样
 ```
 
-把本地`master`分支的最新修改推送至GitHub，现在，你就拥有了真正的分布式版本库！![屏幕截图 2021-09-11 231618](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 231618.png)
+把本地`master`分支的最新修改推送至GitHub，现在，你就拥有了真正的分布式版本库！![屏幕截图 2021-09-11 231618](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-11 231618.png)
 
 关联一个远程库时必须给远程库指定一个名字，`origin`是默认习惯命名；
 
@@ -601,7 +601,7 @@ $ git remote rm origin
 
 第一步先创建远程库，这一步省略，打算直接克隆cs61b2020
 
-![屏幕截图 2021-09-12 112603](D:\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-12 112603.png)
+![屏幕截图 2021-09-12 112603](D:\MarkDowns\Pictures Of Markdown\GIt使用手册\屏幕截图 2021-09-12 112603.png)
 
 为了不频繁开关梯子代理，设置了bitbash走代理
 
