@@ -409,7 +409,7 @@ public void addFirst(Item x) {
 //这种继承也可以是多代的，如果一个subclass的superclass还有superclass，那么subclass将会继承从祖宗往下的所有接口
 ```
 
-This inheritance is also **multi-generationa**l. This means if we have a long lineage of superclass/subclass relationships like in **Figure 4.1.1**, AList not only inherits the methods from List61B but also every other class above it all the way to the highest superclass AKA AList inherits from Collection.![subclass](D:\MarkDowns\Pictures Of Markdown\CS61B\subclass.png)
+This inheritance is also **multi-generationa**l. This means if we have a long lineage of superclass/subclass relationships like in **Figure 4.1.1**, AList not only inherits the methods from List61B but also every other class above it all the way to the highest superclass AKA AList inherits from Collection.![subclass](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/subclass.png)
 
 ```java
 //the code below runs
@@ -619,7 +619,7 @@ public void barkMany(int N) {
 - Does that line cause a compilation error?
 - Which method uses dynamic selection?
 
-![dynamic_selection](D:\MarkDowns\Pictures Of Markdown\CS61B\dynamic_selection.png)
+![dynamic_selection](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751030.png)
 
 ```java
 VengefulSLList<Integer> vsl = new VengefulSLList<Integer>(9);
@@ -1285,13 +1285,13 @@ isConnected()和构造器都是O(N)的时间复杂度
 
 比如{0, 1, 2, 4}, {3, 5}, {6}这三个集合构成的并查集就可以表示为：
 
-![9.2.1](D:\MarkDowns\Pictures Of Markdown\CS61B\9.2.1.png)
+![9.2.1](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751084.png)
 
 数组的下标是并查集的元素，而 id[i]  的值是下标所属的集合，当然这个集合编号是多少并不重要，只要保证在同一个集合的值共享同样的id的值
 
 接下来考虑Connect()运算：connect(2,3)，在调用connect()之前，id[2] = 4, id[5] = 5, 在connect(2,3)以后，**所有和2有一样id的数（以及所有和3有一样id的元素，即所有id为4和id为5的数，都要被赋予相同的新id**，暂时都赋予id为5:
 
-![9.2.2](D:\MarkDowns\Pictures Of Markdown\CS61B\9.2.2.png)
+![9.2.2](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751118.png)
 
 这个实现起来不难
 
@@ -1346,7 +1346,7 @@ isConnected(x,y)为常数时间复杂度，而connect(x,y)和构造器都是O(N)
 
 对于{0, 1, 2, 4}, {3, 5}, {6}来说，id[0] = -1，0为根节点，id[1] = 0，0 是1的父节点
 
-![9.3.1](D:\MarkDowns\Pictures Of Markdown\CS61B\9.3.1.png)
+![9.3.1](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751155.png)
 
 **注意我们使用数组来实现它，但我们把它看成一棵树**
 
@@ -1366,7 +1366,7 @@ isConnected(x,y)为常数时间复杂度，而connect(x,y)和构造器都是O(N)
 
 在最好的情况下，如果x和y恰好是两个根节点，那么只需要做第3步，常数时间 (Hence the name QuickUnion)
 
-![9.3.2](D:\MarkDowns\Pictures Of Markdown\CS61B\9.3.2.png)
+![9.3.2](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751190.png)
 
 #### isConnected(x,y)
 
@@ -1376,7 +1376,7 @@ isConnected(x,y)为常数时间复杂度，而connect(x,y)和构造器都是O(N)
 
 Quick Union存在一个很大的潜在问题：树可能变的很长很长，在这种情况下要想找到某个节点的根节点就变的代价很大
 
-![9.3.3](D:\MarkDowns\Pictures Of Markdown\CS61B\9.3.3.png)
+![9.3.3](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751226.png)
 
 在上图最坏的情况下我们需要从树的最底下往上找根节点，这需要O(N)的时间，也即find()的时间复杂度为O(N)，由于connect()和isConnected()都需要调用find，所以这两个方法的时间复杂度也为O(N)
 
@@ -1426,11 +1426,11 @@ public class QuickUnionDS implements DisjointSets {
 
 **举个例子来说明：将下图T1和T2联合在一起**
 
-![9.4.1](D:\MarkDowns\Pictures Of Markdown\CS61B\9.4.1.png)
+![9.4.1](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751250.png)
 
 **有两种选项：**第一种将T1连在T2上，第二种将T2连在T1的根上
 
-![9.4.2](D:\MarkDowns\Pictures Of Markdown\CS61B\9.4.2.png)
+![9.4.2](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751283.png)
 
 第二种连法显然是更加优越的，因为其高度只有2，根据规则我们也会选择第二种，因为T2是一棵较小的树
 
@@ -1586,7 +1586,7 @@ System.out.println(Arrays.toString(c));
 
 NlogN的性能还是比较优越的：**N^2 对比NlogN 是天壤之别。从NlogN到N很好，但并不是一个根本性的变化**
 
-> ![timetable](D:\MarkDowns\Pictures Of Markdown\CS61B\timetable.png)
+> ![timetable](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751317.png)
 
 ## Lecture 16 - ADTs, Sets, Maps, BSTs
 
@@ -1633,7 +1633,7 @@ NlogN的性能还是比较优越的：**N^2 对比NlogN 是天壤之别。从Nlo
 
 **以下为不合法的树：粉色的都是由于有多条路径所以不合法**
 
-![Invalid Trees](D:\MarkDowns\Pictures Of Markdown\CS61B\Invalid Trees.png)
+![Invalid Trees](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751352.png)
 
 #### 二叉树的属性（不是二叉查找树）
 
@@ -1779,7 +1779,7 @@ BST 实现：
 
 最差情况的树的运行时间和最好情况的树的运行时间差别很大，最好的情况O(logN)，最坏的情况O(N)，运行时间的取决于树的结构，如果树是细长的，那么树和链表几乎是一样的，运行时间是线性的，如果树是下图左边那样茂密平衡的，那就是logN
 
-![[B Trees, Video 1] - Tree Height, Big O vs Worst Case.mp4_20210902_154443.836](D:\MarkDowns\Pictures Of Markdown\CS61B\[B Trees, Video 1] - Tree Height, Big O vs Worst Case.mp4_20210902_154443.836.jpg)
+![[B Trees, Video 1] - Tree Height, Big O vs Worst Case.mp4_20210902_154443.836](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751378.jpg)
 
 #### BST性能
 
@@ -1807,17 +1807,17 @@ BST 实现：
 
 BST的问题在于我们总是往叶子节点插入新的节点，这导致了树的高度增长，以下面这棵平衡的树为例，我们插入17,18,19，按照一般的二叉查找树的规则去插入，则树变得不平衡了，右下角凸出一块，平衡结构被破坏
 
-![B tree1](D:\MarkDowns\Pictures Of Markdown\CS61B\B tree1.png)
+![B tree1](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751420.png)
 
 为了解决这个问题，引出一个新的想法：我们避免再给叶子节点添加子节点，同时让一个节点可以同时保存多个值，在插入值的时候直接往现有的叶子节点里插入值，这样的话树的高度就不会增长
 
 按照这个想法我们把17 18都插入到16所在的叶子里，变成下图
 
-![](D:\MarkDowns\Pictures Of Markdown\CS61B\[B Trees, Video 3] - B Tree Basic Insertion.mp4_20210902_193327.326.jpg)
+![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751445.jpg)
 
 但是这样存在一个潜在的问题，那就是，如果我们按照上述想法插入了很多个数，像下图那样，这就类似于我们插入了一个长度为N数组在叶子节点，如果我们要找的树是最后一个，那么时间复杂度就退化回了O(N),譬如下图我们要找24，我们要先走到最底下然后遍历数组
 
-![B trees 2](D:\MarkDowns\Pictures Of Markdown\CS61B\B trees 2.png)
+![B trees 2](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751482.png)
 
 **这种情况下我们退化为了一个链表，时间变成了线性的**
 
@@ -1825,7 +1825,7 @@ BST的问题在于我们总是往叶子节点插入新的节点，这导致了�
 
 这种树可以叫B树也可以叫2-3树或者是2-3-4树，2-3指的是可以有2个或3个子节点，这种情况下L = 2,	2-3-4同理，L = 3
 
-![[B Trees, Video 3] - B Tree Basic Insertion.mp4_20210902_200359.609](D:\MarkDowns\Pictures Of Markdown\CS61B\[B Trees, Video 3] - B Tree Basic Insertion.mp4_20210902_200359.609.jpg)
+![[B Trees, Video 3] - B Tree Basic Insertion.mp4_20210902_200359.609](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751506.jpg)
 
 #### B树的插值过程
 
@@ -1875,7 +1875,7 @@ B树是二叉查找树的改进版本，它避免了线性时间的最坏情况
 
 对任意二叉查找树来说，有许多种方法来构建它使得它保持二叉树的属性，之前我们讨论了插入顺序是如何影响树的结构的，下图是插入1,2,3时不同顺序带来的不同二叉搜索树结构，但是除了通过不同的插入顺序来得到不同的二叉树结构，我们还可以通过旋转的操作从一种二叉树变换到另外一种，也就是说我们可以通过一系列的旋转操作使得树由不平衡变得平衡
 
-![红黑树1](D:\MarkDowns\Pictures Of Markdown\CS61B\红黑树1.png)
+![红黑树1](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751553.png)
 
 #### Tree Rotation
 
@@ -1887,13 +1887,13 @@ B树是二叉查找树的改进版本，它避免了线性时间的最坏情况
 
 在下图情况下x是P，也就是让G通过旋转变成P的左子节点（这个过程中还调整了K的指向，让P由3个子节点变成两个）
 
-![红黑树2，旋转](D:\MarkDowns\Pictures Of Markdown\CS61B\红黑树2，旋转.png)
+![红黑树2，旋转](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751579.png)
 
 **我们可以把这个旋转的过程看作是G和P节点先融合，然后G(连带着K）再往下走一级变成P的左子节点，注意旋转并不改变树的意义**
 
 并且这个例子的旋转使得树的高度增加了1
 
-![1. Red Black Trees, Video 1  Intro, Rotation.mp4_20210903_143904.935](D:\MarkDowns\Pictures Of Markdown\CS61B\1. Red Black Trees, Video 1  Intro, Rotation.mp4_20210903_143904.935.jpg)
+![1. Red Black Trees, Video 1  Intro, Rotation.mp4_20210903_143904.935](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751616.jpg)
 
 
 
@@ -1901,11 +1901,11 @@ B树是二叉查找树的改进版本，它避免了线性时间的最坏情况
 
 **再做一个逆向的，rotateRight(P)，和上面的刚好是逆运算，这种情况下树的高度减一，我们同样对k进行了调整**
 
-![1. Red Black Trees, Video 1  Intro, Rotation.mp4_20210903_144601.635](D:\MarkDowns\Pictures Of Markdown\CS61B\1. Red Black Trees, Video 1  Intro, Rotation.mp4_20210903_144601.635.jpg)
+![1. Red Black Trees, Video 1  Intro, Rotation.mp4_20210903_144601.635](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751653.jpg)
 
 以下是一个通过旋转优化树的结构的demo
 
-![Rotate Demo](D:\MarkDowns\Pictures Of Markdown\CS61B\Rotate Demo.png)
+![Rotate Demo](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751690.png)
 
 #### Red-Black Trees
 
@@ -1927,17 +1927,17 @@ B树是二叉查找树的改进版本，它避免了线性时间的最坏情况
 
 一种办法是我们可以创造一个胶水节点，这个节点不保存任何东西，只是拿来表明胶水节点的两个子节点实际上是同一个节点保存的两个值，不过这样非常不优雅，因为浪费了内存空间并且代码很难写，而且还有多余的link，虽然我没有写过，但是Josh这样说那肯定就是很难写
 
-![3. Red Black Trees, Video 3  Red Black Tree Definition.mp4_20210903_154358.560](D:\MarkDowns\Pictures Of Markdown\CS61B\3. Red Black Trees, Video 3  Red Black Tree Definition.mp4_20210903_154358.560.jpg)
+![3. Red Black Trees, Video 3  Red Black Tree Definition.mp4_20210903_154358.560](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751747.jpg)
 
 所以我们选择胶水链接而不是胶水节点，详细一点说就是，对于一个本身存储了两个值，有三个子节点的节点来说，我们将存储的两个值的节点分为两个小节点，中间用胶水链接(glue links)连接在一起表明这是同一个节点保存的两个值，而这个胶水链接我们使用红色的线来表示，实际的链接我们使用黑色的线来表示。这样做避免了wasted link
 
-![3. Red Black Trees, Video 3  Red Black Tree Definition.mp4_20210903_154919.944](D:\MarkDowns\Pictures Of Markdown\CS61B\3. Red Black Trees, Video 3  Red Black Tree Definition.mp4_20210903_154919.944.jpg)
+![3. Red Black Trees, Video 3  Red Black Tree Definition.mp4_20210903_154919.944](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751779.jpg)
 
 在修改的过程中我们选择的是让d变成f的子节点，换句话说就是让有两个值的节点，小的那个值变成大的那个值的子节点，从而glue links总是靠左边的(红色的线总是在左侧），在CS61B中我们始终选择让小的值做大的值的子节点，这种选择得到的二叉树叫**left-leaning red-black trees (LLRB)**
 
 对于任意一种结构的2-3树来说，存在唯一一种LLRB与之对应，LLRB与2-3树是一一对应的
 
-![3. Red Black Trees, Video 3  Red Black Tree Definition.mp4_20210903_160216.220](D:\MarkDowns\Pictures Of Markdown\CS61B\3. Red Black Trees, Video 3  Red Black Tree Definition.mp4_20210903_160216.220.jpg)
+![3. Red Black Trees, Video 3  Red Black Tree Definition.mp4_20210903_160216.220](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751814.jpg)
 
 ##### Properties of LLRB's
 
@@ -1967,7 +1967,7 @@ Here are the properties of LLRB's:
 
   数学问题，不多解释，上确界就是2x，**由于2-3树的高度是logN，所以对应的红黑树的高度也是logN**
 
-![6A717DDD3614F40500B615221D3C7F66](D:\MarkDowns\Pictures Of Markdown\CS61B\6A717DDD3614F40500B615221D3C7F66.png)
+![6A717DDD3614F40500B615221D3C7F66](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751844.png)
 
 还剩最后一个问题就是，我们怎样得到一棵红黑树？
 
@@ -1985,25 +1985,25 @@ Here are the properties of LLRB's:
 
 当我们发现插入后red links leaning right，我们使用旋转来保证red links leaning left，如下图插入S后red links靠右，旋转E解决
 
-![5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_195027.495](D:\MarkDowns\Pictures Of Markdown\CS61B\5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_195027.495.jpg)
+![5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_195027.495](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751880.jpg)
 
 然后引入一个概念：**临时4-节点**，也即我们可以允许某个节点在插入时临时保存三个值，如下图，先后插入E和Z后，S节点有两个red link，这是不符合红黑树要求的，但我们允许它临时存在，接下来就是解决它的方法
 
-![5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_200341.120](D:\MarkDowns\Pictures Of Markdown\CS61B\5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_200341.120.jpg)
+![5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_200341.120](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751909.jpg)
 
 如下图，先后插入S和E，导致S与两个red links 相连，形成一个4-node，并且是错误的4-node表现形式，因为出现了连续的left links，所以首先要解决这个形式上错误的4-node
 
-![5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_200541.293](D:\MarkDowns\Pictures Of Markdown\CS61B\5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_200541.293.jpg)
+![5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_200541.293](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751943.jpg)
 
 经过一次旋转以后，我们得到了形式上比较像World2-3 的2-3树对应的非法红黑树(含有临时4-node)
 
-![-](D:\MarkDowns\Pictures Of Markdown\CS61B\5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_201847.720.jpg)
+![-](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751991.jpg)
 
 但是我们还是没有解决这个非法临时4-node的问题，要解决这个问题我们先画出插入E后的2-3对应的红黑树（在此之前当然要先在下面的2-3树里把存了3个值的节点split一下），然后会发现画出来的红黑树和目前已有的红黑树只是在S的三根links上颜色刚好相反，所以我们只需要写一个翻转节点上links颜色的函数	flip()	来翻转，翻转其实是为了模拟split的过程，如下图的例子
 
 **翻转颜色并不改变任何性能或形状上的东西，只是为了保持红黑树和2-3树的一一对应**
 
-![5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_203838.699](D:\MarkDowns\Pictures Of Markdown\CS61B\5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_203838.699.jpg)
+![5. Red Black Trees, Video 5  Red Black Tree Insertion.mp4_20210903_203838.699](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751018.jpg)
 
 还有一个小小的问题就是，通过旋转或者flip修正一个错误可能会引出新的错误，不过问题不大，按照上面的依次处理就行了
 
@@ -2144,7 +2144,7 @@ public static int asciiToInt(String s) {
 
 ![Hashing, Video 3 - ASCII and Data Indexed String Sets.mp4_20210904_153755.958](D:\PotPlayer\Capture\[ADTs, Sets, Maps, BSTs, Video 6] - BST Deletion.mp4_20210902_133830.620.jpg)
 
-但是如果我们也想支持中文？给任意一个中文字符串也一个独一无二的编码，那就要使用Unicode编码系统，对于中文来说底数变成了40959![Hashing，example _chinesw](D:\MarkDowns\Pictures Of Markdown\CS61B\Hashing，example _chinesw.png)
+但是如果我们也想支持中文？给任意一个中文字符串也一个独一无二的编码，那就要使用Unicode编码系统，对于中文来说底数变成了40959![Hashing，example _chinesw](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751063.png)
 
 从例子来看，要存储一个三个汉字组成的字符串，需要的数组大小要在3亿亿左右..显然不太现实
 
@@ -2222,7 +2222,7 @@ contains():1.求得哈希值 (下标）2.如果下标对应的数组是空的，
 
 如果我们只有100个数组空间，意味着最多一百条链表，但是哈希值又很大怎么办？把哈希值对100取余得到下标就好，这样的话链表会更长，因为余数相同的哈希值可能有很多个，**所以时间复杂度稍微变大了点**
 
-![Hashing, Video 5 Separate Chains and Hash Tables.mp4_20210904_221951.958](D:\MarkDowns\Pictures Of Markdown\CS61B\Hashing, Video 5 Separate Chains and Hash Tables.mp4_20210904_221951.958.jpg)
+![Hashing, Video 5 Separate Chains and Hash Tables.mp4_20210904_221951.958](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751098.jpg)
 
 ### Our Final Data Structure: `HashTable`
 
@@ -2251,7 +2251,7 @@ contains():1.求得哈希值 (下标）2.如果下标对应的数组是空的，
 
 下面这个例子就是链表变短了，正是上面叙述的情况（苹果和另外两个不再处于同一链表了，当然，相反的情况有可能发生，由哈希值和M共同决定）
 
-![Hashing, Video 6  Hash Table Performance and Resizing.mp4_20210904_224201.787](D:\MarkDowns\Pictures Of Markdown\CS61B\Hashing, Video 6  Hash Table Performance and Resizing.mp4_20210904_224201.787.jpg)
+![Hashing, Video 6  Hash Table Performance and Resizing.mp4_20210904_224201.787](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751131.jpg)
 
 **假设项目是均匀分布的，那么运行时间就是θ(N/M)，而N / M被限定在一个常数附近，所以θ(N/M)也就是θ(1)**
 
@@ -2261,7 +2261,7 @@ contains():1.求得哈希值 (下标）2.如果下标对应的数组是空的，
 
 **对哈希值为负数的取模可能得到的结果需要做一些处理，java是由于%的原因**
 
-![Hashing, Video 6  Hash Table Performance and Resizing.mp4_20210904_225738.976](D:\MarkDowns\Pictures Of Markdown\CS61B\Hashing, Video 6  Hash Table Performance and Resizing.mp4_20210904_225738.976.jpg)
+![Hashing, Video 6  Hash Table Performance and Resizing.mp4_20210904_225738.976](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751162.jpg)
 
 
 
@@ -2282,15 +2282,15 @@ Some general good rules of thumb:
 
 ### java工业代码中的hashtable
 
-![Hashing, Video 7  Hash Tables in Java.mp4_20210904_230520.194](D:\MarkDowns\Pictures Of Markdown\CS61B\Hashing, Video 7  Hash Tables in Java.mp4_20210904_230520.194.jpg)
+![Hashing, Video 7  Hash Tables in Java.mp4_20210904_230520.194](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751209.jpg)
 
 **对哈希值为负数的处理：**
 
-![Hashing, Video 7  Hash Tables in Java.mp4_20210904_230546.949](D:\MarkDowns\Pictures Of Markdown\CS61B\Hashing, Video 7  Hash Tables in Java.mp4_20210904_230546.949.jpg)
+![Hashing, Video 7  Hash Tables in Java.mp4_20210904_230546.949](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751249.jpg)
 
-![Hashing, Video 7  Hash Tables in Java.mp4_20210904_230557.206](D:\MarkDowns\Pictures Of Markdown\CS61B\Hashing, Video 7  Hash Tables in Java.mp4_20210904_230557.206.jpg)
+![Hashing, Video 7  Hash Tables in Java.mp4_20210904_230557.206](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751275.jpg)
 
-![Hashing, Video 7  Hash Tables in Java.mp4_20210904_230603.105](D:\MarkDowns\Pictures Of Markdown\CS61B\Hashing, Video 7  Hash Tables in Java.mp4_20210904_230603.105.jpg)
+![Hashing, Video 7  Hash Tables in Java.mp4_20210904_230603.105](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751310.jpg)
 
 ## Lecture 20 - Priorit Queues and Heaps
 
@@ -2358,7 +2358,7 @@ public List<String> unharmoniousTexts(Sniffer sniffer, int M) {
 
 1.每个节点都小于等于它的子节点（最小堆）2.缺少的项目只在树的底部，所有节点都尽可能的靠左
 
-![heap-13.2.1](D:\MarkDowns\Pictures Of Markdown\CS61B\heap-13.2.1.png)
+![heap-13.2.1](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111051751337.png)
 
 上图的左边两个绿色的都是合法的，右侧红色的非法
 
