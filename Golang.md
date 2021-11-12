@@ -153,7 +153,7 @@ func main() {
     var e = false//声明变量的方法2
     var f float64 = 9.10//这里不要写成double，只有float32和float64
     python, java := true, false
-    g := "陈樱樱"//短变量声明，不能用在函数外
+    g := "a"//短变量声明，不能用在函数外
     fmt.Println(a,b,c,d,e,f,g)
 }
 ```

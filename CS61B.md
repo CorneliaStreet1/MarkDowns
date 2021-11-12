@@ -2372,3 +2372,7 @@ public List<String> unharmoniousTexts(Sniffer sniffer, int M) {
 - getSmallest()：返回结构的根节点，显然，由结构的定义保证的
 - removeSmallest()：
 
+### Lecture 23.Trees and Traversals
+
+![Intro to Graphs, Video 1  Tree Traversals.mp4_20211110_151056.152](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111101514786.jpg)
+
