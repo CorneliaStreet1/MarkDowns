@@ -334,3 +334,163 @@ $ git pull origin master
 - Deque的最后一个元素在新数组的第size - 1位
 - 所以resize之后NextFirst为`newArray.length - 1`
 - NextLast为`size`
+
+# Lecture 16
+
+![image-20211129152330533](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291523746.png)
+
+- 关于删除节点：
+  - 要删除的节点只有一个child或没有child都好处理。
+  - 关于图里的why：如果不是只有一个或零个child，那么我们选中的这个节点(elf或cat)，就不是左子树最大或右子树最小的，cat的左child会比它更小，而elf的右子树会比它更大。
+
+![image-20211129163032866](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291630070.png)
+
+- BST as Map
+
+![image-20211129164224093](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291642277.png)
+
+- Summary
+
+![image-20211129164907210](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291649416.png)
+
+
+
+# Lecture 17
+
+![image-20211129190158416](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291901605.png)
+
+![image-20211129195845383](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291958573.png)
+
+![image-20211129200834736](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111292008914.png)
+
+
+
+# Lecture 19 Hashing
+
+- BST、BT、LLRBT用作Set的缺点：为了解决这些缺点我们引出hashtable
+
+![image-20211129211446353](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111292114572.png)
+
+
+
+- 关于由于整数溢出导致的理论上的哈希值达不到且与其他对象的哈希值恰好冲突的可能
+- 下面的例子里的俩字符串的哈希值由于整数溢出，变成一样的。
+
+![image-20211129214319152](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111292143340.png)
+
+- hash要解决的两个问题
+
+![image-20211129214821320](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111292148464.png)
+
+- final idea,about the bucket,could be anything we can iterate.ANY collenction.
+
+![image-20211201151754231](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011518477.png)
+
+- work flow:Use LinkedList as bucket：
+  - how to search for existed items
+  - how to add items.
+
+![image-20211201152259183](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011522375.png)
+
+- add（insert）的最坏复杂度也是O(Q)，因为我们必须在插入前遍历表来确定要插入的元素是否事先存在
+
+![image-20211201152646504](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011526681.png)
+
+- 使用取余的方法的downside:
+  - 表变长，当然，可以通过resize改进
+
+![image-20211201152900208](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011529395.png)
+
+- 哈希表的工作流程：
+  - 稍后说明如何处理负的hash code
+
+![image-20211201153116249](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011531428.png)
+
+- Performing Analysis：
+
+![image-20211201153255434](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011532598.png)
+
+- 一个小小的问题 反映出哈希表的一个弊端
+  - bucket could get very long
+  - 一千万个item，最好的情况下也是每个链表两百万个item，插入与查询变得很慢
+
+![image-20211201154301213](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011543396.png)
+
+- 提高：由于复杂度与Q有关，而Q与item的个数N成线性关系，假设我们有M个bucket，最好的情况下Q = N / M
+  - 所以可不可以设法保证Q是O(1)的？如果可以，那么线性优化成了常数
+
+![image-20211201154610625](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011546836.png)
+
+- 解决上述问题的方法就是，我们不采用固定个数的bucket，而是让bucket数也跟着涨
+  - 当N / M大于某一个装载因子的时候，我们增加更多的bucket数(也就是让`ArrayList<LinkdedList>`的size变大)
+
+![image-20211201154834277](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011548455.png)
+
+- 一个`resize()`的例子，值得注意的是增加bucket数目后各个item的位置变化
+  - 使得items move around ，lists get shorter
+  - resize前后各个item的位置取决于新的M和各自的hashcode，原来不在一个bucket的可能变得在一个bucket，而原来处于同一个bucket的item可能会分开。
+
+![image-20211201155228222](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011552397.png)
+
+- 运行时间分析
+  - 总体来说变成了O(1)，对于触发resize的情况我们另做分析，但是均摊下来就是常数时间
+
+![image-20211201155741948](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011557124.png)
+
+![image-20211201155940650](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011559833.png)
+
+- Summary
+
+![image-20211201160220900](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011602067.png)
+
+- item的平均分布对哈希表的运行时间保持常数时间是至关重要的。下图右侧比左侧好，但二者的装载因子是一样的
+- 接下来将会讨论如何确保items平均分布，但首先讨论一下java的哈希表实践 
+
+![image-20211201160345217](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011603386.png)
+
+- hashtable in java
+  - hashCode()的默认方法返回对象的内存地址
+
+![image-20211201161106661](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011611840.png)
+
+- 实现java中的对hashcode取模的运算，由于`%`的语义问题，处理负数的时候会出错，使用另外一个函数：
+  - `Math.floorMod()`
+
+![image-20211201161641506](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011616702.png)
+
+- java  Hashtable workflow：
+
+![image-20211201161848268](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011618445.png)
+
+- 使用hashmap和hashset的一些警告
+
+![image-20211201162348018](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011623210.png)
+
+- 关于如何写出一个好的hashCode函数：使得items分布均匀的关键
+
+![image-20211201163125281](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011631475.png)
+
+- String hashCode()
+
+![image-20211201163151266](C:/Users/jiangyiqing/AppData/Roaming/Typora/typora-user-images/image-20211201163151266.png)
+
+![image-20211201163550837](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011635006.png)
+
+- 关于选择126的弊端
+
+![image-20211201163619002](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011636169.png)
+
+![image-20211201163731006](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011637170.png)
+
+- hashCode() in LinkedList：
+  - 一个链表的哈希值等于表中存储的对象的哈希值之和
+  - 省事的情况下只看前几个对象
+
+![image-20211201163915436](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011639618.png)
+
+- BST hashcode：
+
+![image-20211201164117964](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011641153.png)
+
+# Lecture 29 basic sort
+
