@@ -1138,7 +1138,7 @@ C语言编译器能够优化定长多维数组上的操作代码。
 
 ![image-20211201193716329](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011937525.png)
 
-## 3.10 在机器级程序中将控制与数据结合起来
+### 3.10 在机器级程序中将控制与数据结合起来
 
 - 首先看看数据和控制如何交互
 - 指针
@@ -1196,3 +1196,76 @@ C语言编译器能够优化定长多维数组上的操作代码。
 ![image-20211201214622113](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112012146317.png)
 
 ![image-20211201215113036](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112012151380.png)
+
+- 栈破坏检测
+  - 栈保护者机制：在栈帧中任何局部缓冲区与栈状态之间存储一个特殊的金丝雀值（也称为哨兵值）。金丝雀值在程序每次运行时随机产生，因此攻击者没有简单的办法来得知。在恢复寄存器状态和从函数返回之前，程序检查这个金丝雀值是否被该函数的某个操作或者是该函数调用的某个函数改变了，如果金丝雀值改变，程序异常终止。
+  - 示意图：
+
+![image-20211202204241666](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112022042133.png)
+
+- 限制可执行代码区域
+  - 方法1：限制内存中哪些区域能够存放可执行代码。典型程序中只有保存编译器产生的代码的那部分内存才需要是可执行的，而其他部分会被限制为只允许读和写。
+
+### 3.10.5支持变长栈帧（填坑）
+
+介绍如何实现类似`malloc()`是如何实现的。变长数组是如何实现的。
+
+# 第二部分 在系统上运行程序
+
+# Chapter 8 异常控制流
+
+从给处理器加电开始，到给它断电为止，程序计数器假设一个值的序列：`a0，a1，a3.....，an`，每个`ak`是某个相应指令Ik的地址，每次从`ak`到`ak+1`的过渡称为控制转移。这样的控制转移序列叫做处理器的控制流。
+
+- 最简单的控制流是一个平滑的序列，任意两条指令在内存中都是相邻的。
+- 平滑流的突变（也就是要执行的指令和它的下一条指令不相邻）通常是由跳转、调用、返回之类的指令造成。
+
+但系统也要能够对系统状态的变化做出反应，这些系统状态不是被内部程序变量捕获的，而且也不一定要和程序的执行相关。
+
+现代系统通过使控制流发生突变来对这些情况做出反应。这些突变称为异常控制流（Exceptional Control Flow，ECF）。
+
+- ECF是操作系统实现I/O、进程和虚拟内存的基本机制。
+- 应用程序通过使用一个叫陷阱（trap）或者系统调用的ECF形式，向操作系统请求服务。
+- ECF是计算机系统中实现并发的基本机制。
+- throw in java catch in java try in java 如何实现的？ECF
+
+## 8.1异常
+
+- 异常是异常控制流的一种形式，它一部分由硬件实现，一部分由操作系统实现。具体细节随系统不同而有所不同，基本思想相同。
+- 异常就是控制流中的突变，用来响应处理器状态中的某些变化。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112022140649.png" alt="image-20211202214028509" style="zoom: 67%;" />
+
+- 处理器中，状态被编码为不同的位和信号。状态的变化称为事件。事件可能和当前指令的执行直接相关，但也可能毫无关系。
+
+- 任何情况下，处理器检测到事件发生时，就会通过名为异常表（exception table）的跳转表进行一个间接过程调用，跳转到异常处理程序（exception handler）。异常处理程序是专门设计用来处理这类事件的操作系统子程序。
+
+- 异常处理程序处理完后，根据引起异常的事件类型，有三种情况：
+
+  <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112022152988.png" alt="image-20211202215252863" style="zoom:80%;" />
+
+### 8.1.1 异常处理
+
+处理异常需要硬件软件结合，软硬件各有分工。
+
+- 系统中每一种可能的异常都有唯一的一个非负整数异常号（exceptional number）。
+  - 一部分由处理器的设计者分配：如被零除、缺页、内存访问违例、断点、算术运算溢出。
+  - 其他号码由操作系统内核设计者分配：如系统调用、来自外部的I/O设备的信号。
+- 系统启动时操作系统分配和初始化异常表，表目`k`包含异常`k的处理程序的地址`。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112022222396.png" alt="image-20211202222210225" style="zoom:50%;" />
+
+- 处理器检测到一个事件，并且确定了相应的异常号k，随后处理器触发异常，通过异常表的表目K转到相应的处理程序。
+- 异常表的起始地址放在一个特殊的`异常表基址寄存器`中
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112022226263.png" alt="image-20211202222622151" style="zoom:50%;" />
+
+
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112022249267.png" alt="image-20211202224945009" style="zoom: 50%;" />
+
+
+
+### 8.1.2异常的类型
+
+- 异常分为四类：
+
