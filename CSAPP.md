@@ -1269,3 +1269,241 @@ C语言编译器能够优化定长多维数组上的操作代码。
 
 - 异常分为四类：
 
+
+
+# 第三部分 程序间的交互和通信
+
+# Chapter 10 系统级 I/O
+
+## 10.1 Unix I/O
+
+- 一个Linux文件就是一个m字节的序列，所有的*I/O*设备都被模型化为文件，所有的输入输出都被当做对相应文件的读和写。
+  - 打开文件：内核来打开所需文件（或者访问一个I/O设备），返回一个非负整数，称作文件描述符，描述符是对被打开的文件的标记。内核记录被打开的文件的信息，应用程序只需记住描述符。
+  - `Linux shell`创建每个进程都会固定打开三个文件：标准输入(FD = 0)、标准输出(FD = 1)，标准错误(FD = 2)。可分别用`STD_FILENO`、`STDOUT_FILENO`、`STDERR_FILENO`来代替显式的文件描述符值。
+  - `文件位置k`：初始为0，是从文件开头起始的字节偏移量。可通过`seek`显式设置k的值。
+  - 读写文件：读操作是从文件复制`n>0`个字节到内存，从当前文件位置`k`开始，然后将k增加到`k+n`。给定大小为M字节的文件，当`k`大于等于`M`时，执行读操作会触发`EOF`，应用程序可以检测到这个条件(How?)。**文件结尾处并没有明确的“EOF符号”**。写操作则是从内存复制`n>0`个字节到一个文件，然后更新文件位置k的值。
+  - 关闭文件：应用完成对文件的访问后，通知内核关闭这个文件。内核负责释放文件打开时创建的数据结构，并将文件描述符放回可用的描述符池中。无论一个进程因为何种原因终止，内核都会关闭所有打开的文件并释放它们的内存资源。
+
+## 10.2 文件
+
+每个Linux文件都有一个类型表明它在系统中的角色。
+
+- 普通文件（regular file）：包含任意数据。通常区分文本文件(text file)和二进制文件(binary file)，文本文件只包含`ASCII`或`Unicode`字符的文件。二进制文件就是所有其他的文件。**对内核而已二进制文件和文本文件没有区别。**Linux文本文件包含了一个文本行(text line)序列，每一行都是一个字符序列，以新行符`\n`结束。新行符与ASCII换行符(LF)都为`0x0a`。
+- 目录(directory)：包含一组链接(link)的文件。每个链接都将一个文件名(file name)映射到一个文件，**这个文件可能是另外一个目录**。每个目录都至少含有的两个条目：`.和..`，前者是到该目录自身的链接，后者是到该目录的上级父目录(parent directory)。
+- 套接字(socket)：用来与另一个进程进行跨网络通信的文件。
+- 不在本书讨论范围的文件：命名通道(named pipe)、符号链接(symbolic link)、以及字符和块设备(character and block device)。
+- 文件的目录层次结构：
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131016764.png" alt="image-20211213101645540" style="zoom: 50%;" />
+
+
+
+- 路径名：绝对路径和相对路径
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131019814.png" alt="image-20211213101950539" style="zoom: 50%;" />
+
+## 10.3 打开和关闭文件
+
+进程调用`open()`来打开一个已存在的文件或创建一个新文件。
+
+```c
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+int open(char * filename , int flags , mode_t mode);//成功则返回文件描述符，失败则返回-1
+int fd = open("foo.txt" , O_RDONLY , 0);//以只读方式打开一个已存在文件。
+```
+
+- 返回的文件描述符是当前进程中没有打开的可用的最小文件描述符
+
+- flags参数指明进程打算如何访问这个文件：flag参数同样可以是多个flag的或，为写入提供额外的指示。
+
+  - O_RDONLY：只读
+
+  - O_WRONLY：只写
+
+  - O_RDWR：可读可写。
+
+  - O_CREAT：若文件不存在就创建一个截断的(truncated)空文件。
+
+  - O_TRUNC：如果文件已存在，就截断它。
+
+  - O_APPEND：在每次写操作前设置文件位置K到文件结尾处。也就是在原有文件的后面添加新的内容。
+
+  - ```c
+    //打开已存在文件并在后面添加内容
+    int fd = open("foo.txt" , O_WRONLY|O_APPEND , 0);
+    ```
+
+- mode参数指定新文件的访问权限位。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131049364.png" alt="image-20211213104929160" style="zoom:50%;" />
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131049554.png" alt="image-20211213104937335" style="zoom: 50%;" />
+
+- 进程调用`close()`关闭打开的文件
+
+```c
+#inlcude<unistd.h>
+int close(int fd);//关闭成功返回0，失败返回-1
+```
+
+## 10.4 读和写文件
+
+应用程序调用`read()`和`write()`来执行输入输出
+
+```c
+#include<unistd.h>//unix std
+ssize_t read(int fd , void * buf , size_t n);//成功的返回读取的字节数，EOF则为0，失败返回-1
+ssize_t write(int fd , const void * buf , size_t n);//成功返回写的字节数，出错返回-1
+```
+
+- `read()`从`fd`对应的当前文件位置复制最多`n`个字节到内存位置`buf`。
+- `write()`从内存位置`buf`复制最多`n`个字节到`fd`对应的当前文件位置。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131109836.png" alt="image-20211213110942479" style="zoom: 50%;" />
+
+- 不足值：`read()`和`write()`传送的字节比参数`n`要小。不表示出错。
+  - 读磁盘文件只会遇到EOF。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131116457.png" alt="image-20211213111609094" style="zoom: 50%;" />
+
+## 10.5 用RIO包健壮地读写（待补捏）
+
+## 10.6  读取文件元数据
+
+调用`stat()`和`fstat()`读取文件元数据。
+
+```c
+#include<unistd.h>
+#include<sys/stat.h>
+int stat(const char* filename , struct stat* buf);//成功返回0，出错则返回-1
+int fstat(int fd ,struct stat* buf);//成功返回0，出错返回-1
+//stat借助文件路径打开
+//fstat借助文件描述符打开
+```
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131529199.png" alt="image-20211213152923968" style="zoom: 67%;" />
+
+- `st_mode`编码了文件访问许可位(图10-2)和文件类型。使用宏定义了如下类型：
+  - S_ISREG(m)。是普通文件?
+  - S_ISDIR(m)。是目录？
+  - S_ISSOCK(m)。是套接字？
+  - 一个demo，关于如何使用上述三个东西:
+
+```c
+#include "csapp.h"
+int main(int argc , char **argv) {
+    struct stat stat;
+    char *type , *readok;
+    //使用stat来读取文件的元数据
+    Stat(argv[1] , &stat);
+    if ( S_ISREG(stat.st_mode) ) {
+        type = "regular";
+    }
+    else if ( S_ISDIR(stat.st_mode) ) {
+        type = "directory";
+    }
+    else
+        type = "socket";
+    if ( (stat.st_mode & S_IRUSR) )//访问读权限
+        readok = "yes";
+    else
+        readok = "no";
+    printf(".....");
+    exit(0);
+}
+```
+
+## 10.7 读取目录内容
+
+- 流是对条目有序列表的抽象，在这里指目录项的列表。
+
+```c
+//使用这个系列的函数读取目录内容
+#include<sys/types.h>
+#include<dirent.h>
+DIR* opendir(const char * name);//成功返回指针，失败返回NULL
+//以路径名为参数，返回指向目录流的指针
+```
+
+```c
+#include<dirent.h>//directory entry
+struct dirent * readdir(DIR* dirpointer)//成功则返回指向下一个目录项的指针；没有更多目录项或出错则返回NULL
+```
+
+- 关于`struct dirent`
+  - 这个是对所有版本的Linux来说标准的。有的Linux版本结构中还会有其他的结构成员。
+  - 读取目录项出错的时候`readdir()`会返回NULL并设置`errno`。
+  - 唯一区分是没有更多目录项还是出错，是检查自调用`readdir()`以来`errno`是否被修改过。
+
+```c
+struct dirent {
+    ino_t d_ino;/*inode number，文件位置*/
+    char  d_name[256];/*FileName*/
+}
+```
+
+- 用来关闭流并释放所有资源
+
+```c
+#include<dirent.h>
+int closedir(DIR * dirpointer);//成功返回0，失败返回-1。
+```
+
+-  demo:
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131640811.png" alt="image-20211213164055642" style="zoom: 50%;" />
+
+## 10.8 共享文件
+
+内核用三个相关的数据结构来表示打开的文件：
+
+- 文件描述符表(descriptor table)。每一个进程都有它独立的文件描述符表，它的表项是由该进程打开的文件描述符来索引的。每个打开的文件描述符表项指向文件表中的一个表项。
+- 文件表(file table)。打开的文件的集合由一张文件表来表示，所有的进程共享这张表。每个文件表的表项由：当前的文件位置、引用计数（即当前指向该表项的文件描述符个数），以及一个指向v-node表中对应表项的指针。关闭一个描述符会减少相应文件表表项引用计数的值，当引用计数值变为零时，内核从文件表中删除这个文件表表项（v-node表应该也会删掉？）。
+- v-node表(v-node table)。所有的进程共享这张`v-node`表。每个表项包含的是stat结构中的大多数信息。可以说是元数据的表?
+- 典型情况：没有共享文件：
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131712979.png" alt="image-20211213171253687" style="zoom:50%;" />
+
+
+
+- 共享文件的情况：
+  - 每个文件描述符都有它自己的当前文件位置，所以用不同文件描述符对同一个文件操作可以从文件的不同位置获取数据。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131719215.png" alt="image-20211213171905952" style="zoom:50%;" />
+
+- 父子进程直接共享文件：
+  - 子进程有父进程的文件描述符表，在内核删除相应的文件表表项之前必须父子进程都删掉对应的文件描述符。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131730942.png" alt="image-20211213173006765" style="zoom:50%;" />
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131730860.png" alt="image-20211213173035665" style="zoom:50%;" />
+
+## 10.9 I/O重定向
+
+I/O重定向如何工作？一种方式是使用`dup2()`函数。
+
+```c
+#include<unistd.h>
+int dup2(int oldfd , int newfd );//成功则返回非负的描述符，失败返回-1。
+```
+
+- `dup2()`函数复制描述符表表项`oldfd`到描述符表表项`newfd`，覆盖文件描述符表表项`newfd`以前的内容。如果`newfd`此前对应的文件被打开，那么会先关闭那个文件，再覆盖。看图吧。
+  - 注意一下文件表表项和v-node表项都被删除了。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131801857.png" alt="image-20211213180135553" style="zoom: 50%;" />
+
+## 10.10 标准I/O
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131808891.png" alt="image-20211213180852527" style="zoom:50%;" />
+
+## 10.11  综合：我该使用哪些I/O函数？部分待补捏
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131828167.png" alt="image-20211213182813967" style="zoom: 50%;" />
+
+- 关于使用I/O函数的基本原则：
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112131842715.png" alt="image-20211213184205312" style="zoom:50%;" />
+
+- 还有一些其他基本限制目前看不太懂捏
