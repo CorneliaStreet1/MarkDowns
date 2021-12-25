@@ -494,3 +494,14 @@ $ git pull origin master
 
 # Lecture 29 basic sort
 
+# Lecture 30 QuickSort
+
+![image-20211214194533990](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112141946846.png)
+
+![image-20211214200731637](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112142007858.png)
+
+- 一些快排不适用的情况：
+  - 数组已经有序，或者已经几乎有序
+  - 数组中有重复元素，全部是重复元。
+
+![image-20211214200940939](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112142009287.png)
