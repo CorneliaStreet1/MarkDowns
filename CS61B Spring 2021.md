@@ -1,4 +1,4 @@
-# CS61B Fall 2020
+CS61B Fall 2020
 
 算是二刷吧。神课总是值得二刷的。
 
@@ -491,6 +491,79 @@ $ git pull origin master
 - BST hashcode：
 
 ![image-20211201164117964](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112011641153.png)
+
+
+
+# Lecture 22 Graph Traversals and Implementations
+
+- 只适用于无权图，在这里的图都是没有带权的。
+- 所以不能拿来给地图应用做定位算法捏，因为每条路的长度不一定一样。
+  - 广度优先算法求某点到任意点的最短路径
+  - 使用一个队列。
+
+![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/20211227155345.png)
+
+## Graph API
+
+![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227160652313.png)
+
+![image-20211227161022276](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227161022276.png)
+
+![image-20211227161429317](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227161429317.png)
+
+## Graph Representations
+
+- 邻接矩阵
+  - 使用一个二维`boolean`矩阵
+  - 有一个复杂度问题没看。
+- HashSet< Edge >：边的HashSet，每条边是一对int
+
+![image-20211227164044065](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227164044065.png)
+
+
+
+- Adjacency List：
+
+![image-20211227164311658](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227164311658.png) 
+
+## Runtime Analysis
+
+![image-20211227165822302](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227165822302.png)
+
+
+
+## Graph Traversal Implementation And Runtime Analysis
+
+![image-20211227171535237](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227171535237.png)
+
+![image-20211227171919585](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227171919585.png)
+
+![image-20211227172719650](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227172719650.png)
+
+![image-20211227173009632](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227173009632.png)
+
+![image-20211227173256131](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227173256131.png)
+
+## Summary
+
+![image-20211227174703049](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227174703049.png)
+
+![image-20211227174757403](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227174757403.png)
+
+# Lecture 23 Shortest Paths
+
+- 优先队列可以换成一个Array，要找最小的只需要Iterate through it。
+  - 适用于权值不存在负值的情况
+
+![image-20211227204425952](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227204425952.png)
+
+![image-20211227205013138](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227205013138.png)
+
+- 复杂度，先记着吧 分析不动了
+
+![image-20211227210845708](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227210845708.png)
+
+
 
 # Lecture 29 basic sort
 
