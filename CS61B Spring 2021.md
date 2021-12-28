@@ -578,3 +578,16 @@ $ git pull origin master
   - 数组中有重复元素，全部是重复元。
 
 ![image-20211214200940939](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112142009287.png)
+
+
+
+# Lecture 35 Radix Sort
+
+- 一种非常离谱的排序方法
+  - SleepSort()
+
+![image-20211228134628928](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211228134628928.png)
+
+- Runtime Analysis for CountingSort
+
+![image-20211228140455908](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211228140455908.png)
