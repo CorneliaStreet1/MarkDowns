@@ -1226,7 +1226,7 @@ Arrays.sort(strings ,  (first, second) ->first.length() - second.length())
 ### 6.3.1 使用内部类访问对象状态
 
 - 内部类对同一个包中其他类隐藏。
-- 内部内方法可以访问定义这个类的作用域中的数据，包括原本私有的数据。
+- 内部类方法可以访问定义这个类的作用域中的数据，包括原本私有的数据。
   - **一个内部类方法可以访问自身的数据字段，也可以访问创建它的外围类对象的数据字段。**
   - **内部类对象总有一个隐式引用指向创建它的外部类对象。**
 - 内部类推荐声明为`private`。毕竟除了外围类，其他类也不需要去创建内部类对象。
@@ -1524,3 +1524,538 @@ catch (FileNotFoundException f | UnkonwnHostException u) {
 ```
 
 ### 7.2.3 再次抛出异常与异常链
+
+- 可以在`catch`字句中抛出一个异常。通常希望改变异常的类型时会这样做。
+
+```java
+/**
+*例子
+*指示子系统故障
+*SeverletException
+*/
+try {
+    ....;//访问数据库
+}
+catch (SQLException e) {
+    throw new SeverletException("Database Error :" + e.getMessage() );
+}
+```
+
+- 一种更好的处理方法，不会丢失原始异常的细节。
+  - 将捕获的异常作为抛出的异常的原因。
+
+```java
+try {
+    .....;//访问数据库
+}
+catch (SQLException original) {
+    var e = new SeverletException("Database Error");
+    e.initCause(original);
+    throw e;
+}
+/**
+*可以使用下列语句来获取原始异常
+*/
+Throwable oringal = caughtException.getCause();
+```
+
+- 这种方法可以将检查型异常包装成运行时异常，在不允许抛出检查型异常的方法中间接抛出。
+
+- 也可以捕获一个异常并记录之后直接抛出。
+
+```java
+try {
+    .....;//访问数据库
+}
+catch (SQLException e) {
+    logger.log(lever,message,e);
+    throw e;
+}
+```
+
+### 7.2.4 finally 子句
+
+- `finally`子句存在的意义：
+  - 代码抛出一个异常时，就会停止处理这个方法中剩余的代码，并退出这个方法。如果这个方法已经获得了一些只有它自己知道的本地资源，而且这些资源必须清理，那就会存在没办法清理的问题。
+  - `finally`可以解决这个问题。
+  - 不管是否有异常被捕获，所有情况下`finally`子句中的代码都会被执行。
+  - `try`语句可以没有`catch`子句，只有`finally`子句。
+  - `finally`语句会在抛出未被捕获的异常之前执行。
+  - `finally`语句会在捕获异常之后执行。
+
+- **不要把改变控制流的语句(`return throw break continue`)放入``finally子句中，会造成意想不到的后果，比如返回值遮蔽。**
+
+### 7.2.5 try-with-Resources 语句
+
+- 看书就完事了。跟看文档一样。
+
+### 7.2.6 分析堆栈轨迹元素
+
+- 堆栈轨迹：程序执行过程中某个特定点上所有挂起的方法调用的一个列表。
+- 当`Java`因为一个未捕获的异常而终止时，就会显示堆栈轨迹。
+- 可以调用`Throwable`类的`printStackTrace()`打印堆栈轨迹。
+
+## 7.3 使用异常的技巧
+
+- 只在异常情况下使用异常，不要把异常作为简单测试的手段。
+- 不要过分细化异常。
+- 充分利用异常层次结构。
+- 不要压制异常。
+- 检测错误时宜严不宜宽。
+- 大胆传递异常。
+
+## 7.4 使用断言
+
+- 我觉得JUnit挺好的。看文档的事。
+
+### 7.4.1 断言的概念
+
+- 断言机制允许在测试期间向代码中插入一些检查，而在生产代码中会自动删除这些检查。
+- 关键字`assert`：
+  - `assert condition;`
+  - `assert condition : expression;`
+  - 这两个语句都会计算条件，如果结果为false，抛出`AssertionError`异常。第二个语句还会把表达式传入异常对象构造器并转换成一个消息字符串。
+  - 表达式部分的唯一目的就是产生一个消息字符串。
+
+
+
+### 7.4.2 启用和禁用断言
+
+### 7.4.3 使用断言完成参数检查
+
+## 7.5 日志
+
+- 以后看吧。
+
+# 第8章 泛型程序设计
+
+- 泛型类和泛型方法有类型参数，这使得它们可以准确地描述用特定类型实例化时会发生什么。
+
+## 8.1 为什么要使用泛型设计
+
+### 8.1.1 类型参数的好处
+
+- 一堆好处
+
+
+
+### 8.1.2 谁想成为泛型程序员
+
+## 8.2 定义简单泛型类
+
+- 泛型类就是具有一个或多个类型变量的类。
+- 本章使用`Pair`类作为例子。
+
+```java
+public class Pair<T> {
+    private T first;
+    private T second;
+    public Pair() {
+        first = null;
+        second = null;
+    }
+    public Pair(T first , T second) {
+        this.first = first;
+        this.second = second;
+    }
+    public T getFirst() {
+        return first;
+    }
+    public T getSecond() {
+        return second;
+    }
+    public void setFirst(T value) {
+        first = value;
+    }
+    public void setSecond(T value) {
+        second = value;
+    }
+}
+```
+
+- 泛型类可以有多个类型变量，放在尖括号内，逗号分割。
+  - 类型变量在整个类定义中用于指定`方法的返回类型`以及`字段`和`局部变量`的类型。
+
+```java
+public class Pair<T,U> {
+    .....;
+}
+```
+
+- 用具体类型来替换类型变量来实例化类。
+
+## 8.3 泛型方法
+
+- **泛型方法可以在普通类中定义。**也可以在泛型类中定义。
+- 类型变量放在修饰符后面，返回类型前面
+- 调用泛型方法时，把具体类型放在尖括号中，方法名前面。
+
+```java
+public class e {
+    public static <T> T getMiddle(T... a) {
+        ...;
+    }
+    String str = e.<String>getMiddle("AAA","BBB","CCCCC");
+}
+```
+
+- 大多数情况下前一条的具体类型可以省略，编译器可以通过提供的参数与泛型类型匹配来推断。
+
+```java
+    String str = e.getMiddle("AAA","BBB","CCCCC");
+```
+
+- 一个不能推断的情况。需要解析编译器错误来确定。
+
+```java
+/**
+*编译器解释这个代码的参数有两种方式
+*将参数装箱为Double和Integer对象后，
+*一种是解释为Number的子类e.getMiddle(Number... a)
+*一种是解释为Comparable的子类e.getMiddle(Comparable... a)
+*/
+double middle = e.getMiddle(-1,0,3.14)
+/**
+*补救的方式是消除歧义
+*将所有数都写成double
+*/
+```
+
+## 8.4 类型变量的限定
+
+- 有时候需要对类型变量做一些限定
+
+- 比如在求一组对象的最小者，使用泛型时必须限定传入的对象是实现了`Comparable`的
+
+```java
+/**
+*这里存在的问题是我们无法保证T一定实现了compareTo()方法
+*所以解决的方法是限定T只能是实现了Comparable接口的类
+*/
+class e {
+    //假设a不会为null
+    public static<T> T min(T[] a) {
+        T smallest = a[0];
+        for (int i = 0 ; i < a.length() ; i ++) {
+            if (smallest.compareTo(a[i]) > 0) {
+                smallest = a[i];
+            }
+        }
+    }
+}
+/**
+*添加对T的限定之后
+*现在min方法就只能限定在实现了Comparable接口的类上
+*/
+    public static<T extends Comparable> T min(T[] a) {
+        ...;
+    }
+```
+
+- `T`和限定类型可以是接口也可以是类。
+- `T`应该是限定类型的子类型。
+- 限定类型用`&`分割，类型变量用逗号分割。
+- 最多只能有一个类作为限定，可以有多个接口。类作为限定之一必须放限定列表第一位。
+
+```java
+<T extends BoundType>
+<T extends Comparable & Serializable>
+```
+
+## 8.5 泛型代码和虚拟机
+
+- **虚拟机中没有泛型类型对象，所有对象都属于普通类，**
+
+### 8.5.1 类型擦除
+
+- 无论何时定义一个泛型类型，都会自动提供一个相应的原始类型。这个原始类型名会替换掉原来的类型变量。
+
+  - 类型变量会被擦除并替换为其限定类型，无限定的变量则替换为`Object`。
+
+  - 原始类型用**第一个限定**来替换类型变量，如果没有显式给定限定类型，就替换为`Object`。
+
+```java
+/**
+*未给定限定类型
+*Pair<T>类
+*原始类型
+*不同类型的Pair类型擦除后都会变成原始类型的Pair
+*/
+public class Pair {
+    private Object first;
+    private Object second;
+    public Pair() {
+        first = null;
+        second = null;
+    }
+    public Pair(Object first , Object second) {
+        this.first = first;
+        this.second = second;
+    }
+    public Object getFirst() {
+        return first;
+    }
+    public Object getSecond() {
+        return second;
+    }
+    public void setFirst(Object value) {
+        first = value;
+    }
+    public void setSecond(Object value) {
+        second = value;
+    }
+}
+```
+
+- 给定限定类型的`Pair`
+
+```java
+public class Pair<T extends  Comparable & Serializable> implements Serializable {
+    private T first;
+    private T second;
+    public Pair() {
+        first = null;
+        second = null;
+    }
+    public Pair(T first , T second) {
+        this.first = first;
+        this.second = second;
+    }
+}
+/**
+*原始类型
+*/
+public class Pair implements Serializable {
+    private Comparable first;
+    private Comparable second;
+    public Pair() {
+        first = null;
+        second = null;
+    }
+    public Pair(Comparable first , Comparable second) {
+        this.first = first;
+        this.second = second;
+    }
+}
+```
+
+### 8.5.2 转换泛型表达式
+
+- 编写一个泛型方法调用时，如果擦除了返回类型，编译器会插入强制类型转换。
+- 访问一个泛型字段时也会插入强制类型转换。
+
+
+
+### 8.5.3 转换泛型方法
+
+- 类型擦除也存在于泛型方法中。
+
+```java
+/**
+*类型擦除前
+*/
+public static <T extends Comparable> T min(T[] a)
+/**
+*类型擦除后
+*/
+public static  Comparable min(Comparable[] a)
+
+```
+
+- 所有的类型参数都会替换为它们的限定类型。
+- 会合成桥方法来保持多态。
+
+### 8.5.4 调用遗留代码
+
+
+
+## 8.6 限制与局限性
+
+- 大多数限制都是由类型擦除引起的。
+
+### 8.6.1 不能用基本类型实例化类型参数
+
+- 不能使用基本类型来代替类型参数。
+  - 但是有包装器。
+  - 基本类型只有八种，可以用单独的类和方法来处理，并不是一个很大的缺陷。
+
+### 8.6.2 运行时类型查询只适用于原始类型
+
+- 虚拟机中的对象总有一个特定的非泛型类型。因此所有的类型查询只产生原始类型。
+
+```java
+/**下列仅仅测试a是否是一个任意类型的Pair
+*而不是测试a是否是T类型的Pair
+*/
+if (a instanceof Pair<T>)
+if (a instanceof Pair<String>)
+Pair<String> p = (Pari<String>)a;
+```
+
+- `getClass()`也总是返回原始类型。
+
+### 8.6.3 不能创建参数化类型的数组
+
+- 不能实例化参数化类型的数组
+
+```java
+/**
+*Error
+*/
+var table = new Pair<String>[100];
+/**
+*声明类型为Pair<String>类型的变量还是合法的
+*只是不能对它用new
+*/
+Pair<String>[] table;
+```
+
+### 8.6.4 Varargs 警告
+
+- 向参数可变的方法中传递一个泛型类型的实例。
+
+### 8.6.5 不能实例化类型变量
+
+**实在是看不懂也看不动了，先看下一章吧**
+
+## 第9章 集合
+
+- 仅介绍如何使用标准库中的集合
+
+## 9.1 Java集合框架
+
+### 9.1.1 集合接口与实现分离
+
+- Java集合类库将接口与实现分离。
+- **只有在构造具体的集合对象时才会使用具体的类，但是可以使用接口类型的变量存放集合引用**
+
+
+
+### 9.1.2 Collection接口
+
+- `Collection`接口最基本的两个方法
+
+```java
+public interface Collection<E> {
+    /*
+    *返回true，如果添加元素成功
+    *返回false，如果集合没有发生变化
+    */
+    boolean add(E element);
+    /*
+    *返回一个实现了Iterator接口的对象
+    *可以使用这个对象依次房屋为集合的元素
+    */
+    Iterator<E> iterator();
+}
+```
+
+### 9.1.3 迭代器
+
+- 迭代器`Iterator`接口包含以下4个方法。
+
+```java
+public interface Iterator<E> {
+    /*
+    *反复调用next()可以逐个访问集合中的元素
+    *如果到达集合末尾则返回NoSuchElementException
+    *在调用它之前先调用hasNext()
+    *在hasNext()返回true的情况下反复调用它
+    */
+    E next();
+    /*
+    *调用next()之前调用hasNext()
+    *如果还没到达集合末尾，返回true
+    *反之返回false
+    */
+    /**
+    *删除上次调用next()时返回的元素
+    *越过next()直接调用remove()是不合法的
+    *抛出异常
+    */
+    void remove();
+    default void forEachRemaining(Comsumer<? super E> action);
+}
+```
+
+- `for-each`循环
+  - 编译器将`for-each`循环转化为带有迭代器的循环。
+
+```java
+Collection c = .....;
+Iterator<String> e = c.iterator()
+while(e.hasNext()) {
+    String str = e.next();
+    .......;
+}
+/**
+*for-each
+*/
+for(String str : c) {
+    .....;
+}
+```
+
+- `for-each`循环可以处理任何实现了`Iterable`接口的类。
+
+```java
+public interface Iterable<E> {
+    /*
+    *返回一个迭代器
+    */
+    Iterator<E> iterator();
+}
+```
+
+- `Collection`接口扩展了`Iterable`接口。标准库中任意集合可以使用`for-each`。
+
+### 9.1.4 泛型实用方法
+
+- `Collection`接口提供了许多许多有用的方法。
+  - 实现这个接口原则上要把每一个方法都实现。但是这样很烦。
+  - 所以Java提供了抽象集合类`AbstractCollection`。
+    - 保留基础方法`size()`和`iterator()`为抽象方法。
+    - 但为实现者实现了其他的例行方法。
+  - 具体集合类可以扩展`AbstractCollection`类，只需要提供抽象方法的具体实现即可。
+  - 也可以去覆盖超类提供的例行方法，如果更高效。
+
+## 9.2 集合框架中的接口
+
+- 集合的两个基本接口：`Collection`和`Map`。
+
+```java
+/**
+*映射加入键/值对的方法
+*/
+void put(K key , V value);
+/**
+*从映射中读取值
+*/
+V get(K key);
+```
+
+- `List`：
+  - 有序集合。元素会增加到容器的特定位置。
+  - 迭代器访问：顺序地访问。
+  - 整数索引访问：随机访问。
+
+## 9.3 具体集合
+
+### 9.3.1 链表
+
+### 9.3.1 数组列表
+
+### 9.3.3 散列表
+
+- 标准库使用的桶数是2的幂。默认值为16。
+- 装填因子默认值为0.75。
+
+### 9.3.4 树集
+
+## 9.4 映射
+
+### 9.4.1 基本映射操作
+
+- 映射是将值映射到键。
+- 要想检索一个对象，**必须使用键**。
+- 键必须是唯一的，不能对同一个键存放两个值。
