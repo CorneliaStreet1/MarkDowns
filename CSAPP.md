@@ -1862,16 +1862,29 @@ foreach section s {
 现代系统通过使控制流发生突变来对这些情况做出反应。这些突变称为异常控制流（Exceptional Control Flow，ECF）。
 
 - ECF是操作系统实现I/O、进程和虚拟内存的基本机制。
+
 - 应用程序通过使用一个叫陷阱（trap）或者系统调用的ECF形式，向操作系统请求服务。
+
+  - 系统调用是为程序提供到操作系统的入口点的异常。
+
 - ECF是计算机系统中实现并发的基本机制。
-- throw in java catch in java try in java 如何实现的？ECF
+
+- throw in java catch in java try in java 如何实现的？ECF。
+
+  - 软件异常允许程序进行非本地跳转，也即违反调用/返回栈规则的跳转。
+  - 非本地跳转是ECF的一种应用层形式。
+
 - 异常位于硬件和操作系统交界的部分。
+
 - 进程和信号位于应用和操作系统的交界之处。
-- 非本地跳转是ECF的一种应用层形式。
+
+  
 
 ## 8.1异常
 
-- 异常是异常控制流的一种形式，它一部分由硬件实现，一部分由操作系统实现。具体细节随系统不同而有所不同，基本思想相同。
+- 异常是异常控制流的一种形式，它一部分由硬件实现，一部分由操作系统实现。
+  - 由于一部分依赖于硬件，具体细节随系统不同而有所不同，基本思想相同。
+
 - 异常就是控制流中的突变，用来响应处理器状态中的某些变化。
 
 <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112022140649.png" alt="image-20211202214028509" style="zoom: 67%;" />
@@ -1891,12 +1904,15 @@ foreach section s {
 - 系统中每一种可能的异常都有唯一的一个非负整数异常号（exceptional number）。
   - 一部分由处理器的设计者分配：如被零除、缺页、内存访问违例、断点、算术运算溢出。
   - 其他号码由操作系统内核设计者分配：如系统调用、来自外部的I/O设备的信号。
-- 系统启动时操作系统分配和初始化异常表，表目`k`包含异常`k的处理程序的地址`。
+- 系统启动时操作系统分配和初始化异常表，**表项`k`包含异常k的处理程序的地址**。
 
 <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112022222396.png" alt="image-20211202222210225" style="zoom:50%;" />
 
 - 处理器检测到一个事件，并且确定了相应的异常号k，随后处理器触发异常，通过异常表的表目K转到相应的处理程序。
-- 异常表的起始地址放在一个特殊的`异常表基址寄存器`中
+- **异常表的起始地址放在一个特殊的`异常表基址寄存器`中**
+  - 处理第k种异常的条目的地址为异常表的起始地址加上84k。
+    - 不是处理第k种异常的程序的地址捏，是保存这个地址的地方的地址。
+
 
 <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112022226263.png" alt="image-20211202222622151" style="zoom:50%;" />
 
@@ -1909,6 +1925,441 @@ foreach section s {
 ### 8.1.2异常的类型
 
 - 异常分为四类：中断、陷阱、故障、终止。
+  - 同步的三类异常是**执行当前指令的结果**，称作**故障指令**。
+
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201232239283.png" alt="image-20220123223910882" style="zoom: 50%;" />
+
+
+
+#### 1. 中断
+
+- 来自处理器外部的I/O设备的信号的结果。
+- 硬件中断不是由任何一条专门指令造成的，这种意义上它是异步的。
+- 处理硬件中断的异常处理程序称为*中断*处理程序。
+- 处理器注意到中断引脚电压变高==》从系统总线读取异常号==》调用适当的中断处理程序==》返回并将控制转移给下一条指令。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201232307357.png" alt="image-20220123230739031" style="zoom: 50%;" />
+
+
+
+#### 2. 陷阱和系统调用
+
+- **陷阱是有意的异常，是执行一条指令的结果。**
+- 陷阱最重要的作用是提供系统调用。`systemcall n`指令。
+  - 用户程序想要请求内核服务n时执行这条指令。
+  - 执行`systemcall`指令会导致一个到异常处理程序的陷阱。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201240010731.png" alt="image-20220124001059400" style="zoom:50%;" />
+
+
+
+
+
+- 系统调用和普通函数的调用从程序员的角度看是一样的。
+- 二者的不同之处：
+  - **普通函数运行在*用户模式*中**。
+    - 用户模式限制了函数可以执行的指令类型。
+    - 普通函数只能访问与调用函数相同的栈。
+  - **系统调用运行在*内核模式*中**。
+    - 内核模式允许系统调用执行特权指令。
+    - 系统调用可以访问定义在内核中的栈。
+      - 比如会把处理器的状态信息压入内核栈。
+
+#### 3. 故障
+
+- 直接截图吧。讲的简洁明了。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201240018518.png" alt="image-20220124001840998" style="zoom:50%;" />
+
+#### 4. 终止
+
+- 不可恢复的致命错误造成的结果，通常是硬件错误。
+- 终止处理程序不将控制返回给应用程序，而是给`abort`，由`abort`终止应用程序。
+
+### 8.1.3 Linux/x86-64 系统中的异常
+
+- 总有有256种异常。
+  - 0~31号异常由Intel架构师定义，对任何x86-64系统都是一样的。
+  - 剩余32~255号异常是由操作系统定义的陷阱和中断。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201240049697.png" alt="image-20220124004918449" style="zoom:33%;" />
+
+#### 1. Linux/x86-64 故障和终止
+
+- 除法错误。
+  - 应用试图除以零，或者除法指令的结果对于目标操作数来说太大。
+  - 不从除法错误恢复，直接终止程序。
+  - Floating exception。
+- 一般保护故障。
+  - 一个程序引用了一个未定义的虚拟内存区域。
+  - 试图对一个只读的文本端写入。
+  - Linux不尝试恢复。`Segmentation fault`。
+
+- 缺页。
+  - 会重新执行产生故障的那条指令。
+  - 处理器将适当的磁盘上虚拟内存的一个页面映射到物理内存的一个页面，然后重新执行指令。
+- 机器检查
+  - 检测到致命的硬件错误。
+  - 不返回控制给应用程序。
+
+#### 2. Linux/x86-64 系统调用
+
+- 应用程序想要请求内核服务时调用。
+- **每个系统调用都有一个唯一的整数号，对应于一个到内核中跳转表的偏移量。**
+- 系统级函数：系统调用和与它们相关联的包装函数。
+- **所有到Linux系统调用的参数都是通过通用寄存器而不是栈传递的。**
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201241420067.png" alt="image-20220124142042640" style="zoom:50%;" />
+
+- HelloWorld
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201241423435.png" alt="image-20220124142355067" style="zoom:50%;" />
+
+
+
+## 8.2 进程
+
+- 进程的上下文：
+  - 程序的代码和数据。
+  - 它的栈、通用目的寄存器、程序计数器、环境变量、打开的文件描述符的合集。
+- 不讨论进程如何实现的细节。关注进程提供给应用程序的关键抽象。
+  - 一个独立的逻辑控制流，我们的程序好像独占处理器的假象。
+  - 一个私有的地址空间，我们的程序好像独占整个内存的假象。
+  - 也就是我们的程序似乎独占整个计算机的假象。
+
+### 8.2.1 逻辑控制流
+
+- 一系列的PC的值每一个都唯一对应于一条指令。整个PC值的序列叫做逻辑控制流。
+  - 可能是可执行目标文件中的指令。
+  - 也可能是运行时动态链接到程序的共享对象中的指令。
+- 进程是轮流使用处理器的。
+  - 每个进程执行它的逻辑控制流的一部分，然后被暂时挂起，轮到其他进程。
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201241453923.png" alt="image-20220124145305633" style="zoom: 33%;" />
+  - “唯一的反面例证”
+  - ![image-20220124145138713](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201241451988.png)
+
+### 8.2.2 并发流
+
+- 一个逻辑流的执行在时间上与另一个流重叠，称为`并发流`(`concurrent flow`)，这两个流称作并发地运行。
+- 流X和流Y相互并发，当且仅当：
+  - X在流Y开始之后且Y结束之前，开始执行它的第一条指令。
+  - Y在流X开始之后且X结束之前，开始执行它的第一条指令。
+  - **8-12的A和B是并发的，因为A结束之前B开始了它的第一条指令，尽管B开始的时刻A并没有使用处理器。**
+    - 如果两个流在时间上是重叠的，那么它们就是并发的，**即使它们运行在同一个处理器上。**
+  - **并发流的思想与流运行的处理器核数或计算机数无关。**
+  - **如果两个流并发地运行在不同的处理器核或不同的计算机上，称它们为并行流(`parallel flow`，它们并行地运行和执行**
+- 多个流并发地执行的现象称作并发。一个**进程**和其他进程**轮流**运行的概念称为多任务。
+  - 一个进程执行它的控制流的一部分的每一段时间称为时间片(`time slice`)。
+  - 多任务也叫时间分片(`time slicing`)。
+
+### 8.2.3 私有地址空间
+
+- 进程为每个程序提供它自己的私有地址空间。
+  - 一般而言和这个地址空间中的某个地址相关联的那个内存字节是不能被其他进程读写的。
+  - 独占系统地址空间的假象。
+- n位地址的机器上有2^n^种可能地址。
+- 通用的进程内存地址空间结构图
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201241528478.png" alt="image-20220124152812137" style="zoom: 33%;" />
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201241528263.png" alt="image-20220124152824913" style="zoom: 33%;" />
+
+### 8.2.4 用户模式和内核模式
+
+- 处理器必须有一种机制来限制一个应用可以执行的指令以及它可以访问的地址空间范围。
+  - 通常是用某个**控制寄存器**中的一个`模式位`(`mode bit`)来实现这种功能。
+    - 这个寄存器描述了进程当前享有的特权。
+    - 设置了模式位时进程处于*内核模式*中。
+    - 没有设置位模式时进程处于*用户模式*中
+- 内核模式
+  - 可以执行指令集中的任何指令。
+  - 可以访问系统中的任何内存位置。
+- 用户模式：
+  - 进程不允许执行特权指令，比如停止处理器、改变模式位、发起*I/O*操作。
+  - 不允许直接引用地址空间中内核区内的代码和数据（只能通过调用系统调用来间接访问）。
+
+- **应用程序进程初始时处于*用户模式*。进入内核模式的唯一方法就是通过异常。**
+  - **异常发生时，控制传递给异常处理程序，处理器将模式变换为内核模式。**
+  - 返回应用程序时模式切换回用户模式。
+
+### 8.2.5 上下文切换
+
+- 上下文切换(`content switch`)：内核使用的一种较高层次形式的异常控制流，用于实现多任务。
+  - 建立于较低层的异常机制之上。
+- **内核**为每个进程维持上下文。
+- 上下文：内核重新启用一个被挂起的进程所需要的状态信息。由一些对象的值组成。
+  - 通用目的寄存器、浮点寄存器、程序计数器、状态寄存器。
+  - 内核栈、用户栈。
+  - 各种内核数据结构。
+    - 描述地址空间的页表。
+    - 进程表、文件表。
+
+- 调度(`scheduling`)：由内核中称为`调度器`(`scheduler`)的代码处理。
+  - 内核挂起当前进程，并重新开始一个此前被挂起的进程就叫调度。
+- 上下文切换：
+  - 保存被挂起的进程的上下文。
+  - 恢复被调度的进程的上下文。
+  - 将控制传递给新启动的进程。
+- 内核执行系统调用时可能会发生上下文切换(比如`fork()`)
+  - 如果系统调用因为等待某个事件发生而阻塞，此时内核就可以让当前进程休眠，切换到另一个进程。
+  - `sleep()`。显式让调用进程休眠。
+  - 即使系统调用没有阻塞也可以选择切换上下文。
+- 中断也可以引起上下文切换。比如**每次发生定时器中断内核就会切换到一个新的进程。**
+
+## 8.3 系统调用错误处理
+
+- 当Unix系统级函数遇到错误时它们通常会返回-1并设置全局变量`errno`来表示什么出错了。
+- **错误处理包装函数：**
+  - 在包装函数中调用系统级函数。
+  - 在包装函数中实行错误检查。
+  - 具体看图
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201262355537.png" alt="image-20220126235511133" style="zoom: 50%;" />
+
+## 8.4 进程控制
+
+- 这一节描述Unix中提供的从C中操作进程的函数。
+
+### 8.4.1 获取进程ID
+
+- 每个进程都有一个整数进程ID。`PID`。
+  - `getpid()`返回调用进程的ID。
+  - `getppid()`返回当前进程的父进程的ID。
+
+```c
+#include <sys/types.h>
+#include <unistd.h>
+pid_t getpid();
+pid_t getppid();
+typedef int pid_t;
+```
+
+### 8.4.2 创建和终止进程
+
+- 以程序员的角度，进程总是处于以下三种状态：
+  - 运行。要么在CPU上运行，要么在等待被执行且最终会被内核调度器调度。
+  - 停止。进程的执行被挂起，**且不会被调度。**
+    - 收到`SIGSTOP`、`SIGTSTP`、`SIGTTIN`、`SIGTTOUT`信号时进程停止，保持停止直到进程收到`SIGCONT`信号，进程重新开始运行。
+  - 终止。进程永远停止。
+    - 收到一个信号，该信号默认行为是终止。
+    - 从主程序返回。
+    - 调用`exit()`。
+
+```c
+#include<stdlib.h>
+void exit(int status);//以status退出状态来终止进程。
+```
+
+- 父进程调用`fork()`来创建子进程。
+
+```c
+#include<sys/types.h>
+#include<unistd.h>
+pid_t fork();
+//子进程返回0，父进程返回子进程的pid。出错返回-1。
+```
+
+- 关于`fork()`：
+
+  - 子进程与父进程几乎完全相同。
+    - **用户级**虚拟地址空间相同，一份独立的副本，包含相同的代码、数据段、堆、共享库和用户栈。
+    - 父进程中任何打开的文件描述符的副本。**意味着子进程可以读写父进程中打开的任何文件。**
+  - 只被调用一次，但返回两次。父进程返回值为子进程PID，子进程中返回0。
+  - **父进程和子进程是并发执行的独立进程，内核能以任意方式交替执行它们的逻辑控制流中的指令。**。
+  - **相同但独立的地址空间。**
+    - 子进程和父进程有相同的用户栈、相同的本地变量值、相同的堆、相同的全局变量值、相同的代码。
+    - 但是都是独立的，在物理上就是不同的两块内存位置。
+
+  - 共享文件。子进程继承父进程所有打开的文件。
+
+### 8.4.3 回收子进程
+
+- 当某个进程终止时，内核保持它在已终止状态（不会立即从系统清除），直到父进程回收(`reaped`)它。
+  - 父进程回收子进程时，**内核**将子进程的退出状态传递给父进程，然后抛弃子进程。
+  - 一个终止了但未被回收的进程称为僵死进程(`zombie`)。、
+  - **即使僵死进程没有运行，仍然占用系统的内存资源。**
+- 父进程终止的情况下，它的子进程由`init`进程接管。
+  - `init`进程PID=1。
+  - 系统启动时由内核创建，不会终止，是所有进程的祖先。
+  - 如果父进程没有回收它的僵死子进程就终止了，那么内核安排`init`接管并回收。
+- 进程可以调用`waitpid()`来等待它的子进程终止或停止。
+
+```c
+#include<sys/types.h>
+#include<sys/wait.h>
+pid_t waitpid(pid_t pid , int* statusp , int options);
+//成功返回子进程PID,WNOHANG返回0，出错返回-1。
+```
+
+- 关于`waitpid()`:
+  - 默认情况：options = 0。
+  - `waitpid()`会**挂起**调用进程的执行，直到它的等待集合(`wait set`)中的一个子进程终止。
+  - 如果等待集合中的进程刚好在调用`waitpid()`的时刻终止了，`waitpid()`立即返回，并返回这个进程的PID，这个进程被清理。
+
+- 判定等待集合的成员：
+
+  - PID > 0，等待集合就单独一个成员，其进程ID就是PID。
+  - PID = -1 ，等待集合由父进程所有的子进程构成。
+  - 其他类型不做讨论。
+
+- 修改默认行为：关于`options`参数
+
+  - `WNHANG`：如果等待集合中的任何子进程都还没有终止，那么立即返回，返回值为0。
+  - **`WUNTRACED`：挂起调用进程的执行，直到等待集合中的一个进程已终止或被停止。**
+    - 默认行为是返回已终止的进程的PID。这个选项返回已终止或被停止的进程的PID。
+  - `WCONTINUED`：挂起调用进程的执行，直到等待集合中一个正在运行的进程终止，或等待集合中一个被停止的进程收到`SIGCONT`信号重新开始执行。
+  - 可以用或运算把这些选项组合起来。
+
+- 检查已回收子进程的退出状态：
+
+  <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201271420016.png" alt="image-20220127142025464" style="zoom:50%;" />
+
+- 错误条件：
+  - 调用进程没有子进程，`waitpid()`返回-1，并设置`errno`为ECHILD。
+  - 如果`waitpid()`被一个信号中断，返回-1，设置`errno`为EINTR。
+- `wait()`:`waitpid()`的简单版本。
+
+```c
+#include<sys/types.h>
+#include<sys/wait.h>
+pid_t wait(int *statusp) {
+    int returnid = waitpid(-1, statusp, 0);
+    return returnid;
+}
+```
+
+- 对所有子进程的回收顺序是非确定性行为。
+
+### 8.4.4 让进程休眠
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201271454166.png" alt="image-20220127145428766" style="zoom: 50%;" />
+
+
+
+### 8.4.5 加载并运行程序
+
+- 在当前进程上下文加载并运行一个新程序。
+
+```c
+#include<unistd.h>
+int execve(const char *filename , const char * argv[] , const char *envp[]);
+//文件名、参数列表、环境列表。
+//成功则不返回，出现错误时、失败返回-1.
+```
+
+- 关于两个列表。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201271513830.png" alt="image-20220127151335508" style="zoom: 50%;" />
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201271513016.png" alt="image-20220127151343713" style="zoom:33%;" />
+
+- 加载了`filename`对应的程序之后的用户栈。
+
+  - **参数列表的字符串本身和环境列表的字符串本身也在这个栈里。**
+  - 数组也在。
+
+  <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201271521391.png" alt="image-20220127152126040" style="zoom: 67%;" />
+
+- **关于main函数的参数列表**：懒得写。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201271534199.png" alt="image-20220127153453769" style="zoom:50%;" />
+
+
+
+- **关于`exec`的进一步旁注：`exec`并没有创建一个新的进程，而是直接覆盖当前进程的地址空间。**
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201271536256.png" alt="image-20220127153613812" style="zoom:67%;" />
+
+### 8.4.6 利用fork和execve运行程序
+
+- 一个简单的shell原型，填补一下认知，挺有意思的。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201271953402.png" alt="image-20220127195338074" style="zoom:50%;" />
+
+## 8.5 信号
+
+- 一个信号就是一条小消息，它通知进程系统中发生了一个某种类型的事件。每种信号类型对应某种系统事件。
+- 低层的硬件异常由内核异常处理程序处理，正常情况下对用户进程不可见。
+- **信号提供了一种机制，通知用户进程发生了某些异常。**一些例子及信号表。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201281354243.png" alt="image-20220128135403822" style="zoom: 67%;" />
+
+### 8.5.1 信号术语
+
+- 传送一个信号的两个步骤：
+  - 发送信号。
+  - 接收信号。
+- <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201281550450.png" alt="image-20220128155048176" style="zoom: 33%;" />
+- 关于发送信号：
+  - 发送的方式：**内核**通过**更新目的进程上下文中的某个状态**发送一个信号给目的进程。
+  - 进程可以发送信号给自己。
+  - 发送信号的原因：
+    - 内核检测到系统事件，如除0。
+    - 一个进程调用`kil()`函数，显式地要求内核发送一个信号。
+
+- 关于接收信号：当进程被内核强迫以某种方式对信号的发送做出反应时，它就接收了信号。
+  - 进程可以忽略这个信号，终止或者通过执行一个称为信号处理程序(`sign handler`)的**用户层**函数捕获这个信号。
+- 一个**发出而没有被接收**的信号叫做待处理信号。一种类型至多只有一个待处理信号。
+  - 如果一个进程已有一个待处理的信号，那么后续发送到这个进程的同类型的其他信号都会被丢弃。
+- **进程可以选择阻塞某种信号。**
+  - 被阻塞的信号可以发送，但是不会被进程接收，直到进程取消对这种信号的阻塞。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201281550382.png" alt="image-20220128155000072" style="zoom:50%;" />
+
+
+
+### 8.5.2 发送信号
+
+- 所有向进程发送信号的机制都是基于`进程组(process group)`这个概念的。
+
+#### 1.进程组
+
+- 每个进程都只属于一个进程组，进程组由正整数进程组ID来标识。
+
+```c
+#include<unistd.h>
+pid_t getpgrp(void);
+//返回进程组ID
+```
+
+- 默认子进程和父进程同属一个进程组。一个进程可以通过使用`setpgid()`来改变**自己或其他进程的**进程组。
+
+```c
+#include<unistd.h>
+int setpgid(pid_t pid , pid_t pgid);
+//第一个参数是要改变所属进程组的进程PID
+//第二个参数是进程组ID
+//将进程pid所属的进程组改为pgid
+//pid为零则是改变当前进程的进程id（使用当前进程的pid作为参数）
+//pgid为零则使用pid指定的进程的PID作为进程组的ID
+```
+
+#### 2. 用bin/kill 程序发送信号
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201281650763.png" alt="image-20220128165037384" style="zoom: 50%;" />
+
+#### 3. 从键盘发送信号
+
+- 作业(`job`)：为对一条命令行求值而创建的进程。
+  - 任何时刻至多只有一个前台作业和0个或多个后台作业。
+  - shell为每个作业创建一个独立的进程组，进程组ID通常取自作业中父进程中的一个。
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201282102441.png" alt="image-20220128210209959" style="zoom:50%;" />
+
+#### 4. 用kill函数发送信号
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201282106050.png" alt="image-20220128210632665" style="zoom:50%;" />
+
+#### 5. 用alarm函数发送信号
+
+<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202201282124519.png" alt="image-20220128212432118" style="zoom:50%;" />
+
+### 后面的看不下去了
+
+## 8.6 非本地跳转（也没看完
+
+- 用户级异常控制流，非本地跳转(`nonlocal jump`)，将控制直接从一个函数转移到另一个当前正在执行的函数。
+- 
+
+# 第9章 虚拟内存
 
 
 

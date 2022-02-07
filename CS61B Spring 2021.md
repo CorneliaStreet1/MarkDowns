@@ -335,6 +335,37 @@ $ git pull origin master
 - 所以resize之后NextFirst为`newArray.length - 1`
 - NextLast为`size`
 
+# Lecture 12 Command Line Programming, Git, Project 2 Preview
+
+![image-20220207214522734](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072145953.png)
+
+
+
+- **第0个参数并不是程序本身的名字，就是第0个命令行参数。**
+- **每个命令行参数都是一个字符串，即便是阿拉伯数字字符(1,2,3..)，也当做字符串处理。**
+
+![image-20220207214653555](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072146814.png)
+
+
+
+![image-20220207215732040](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072157251.png)
+
+![image-20220207221949507](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072219185.png)
+
+![image-20220207222226481](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072222745.png)
+
+![image-20220207222532275](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072225521.png)
+
+![image-20220207222943567](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072229836.png)
+
+![image-20220207231440898](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072314115.png)
+
+![image-20220207230827693](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072308959.png)
+
+![image-20220207231055512](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072310764.png)
+
+![image-20220207231538016](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072315213.png)
+
 # Lecture 16
 
 ![image-20211129152330533](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291523746.png)
