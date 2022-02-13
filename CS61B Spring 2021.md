@@ -366,13 +366,19 @@ $ git pull origin master
 
 ![image-20220207231538016](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202072315213.png)
 
-# Lecture 16
+# Lecture 16 ADTs, Sets, Maps, BSTs
 
 ![image-20211129152330533](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291523746.png)
 
 - 关于删除节点：
   - 要删除的节点只有一个child或没有child都好处理。
-  - 关于图里的why：如果不是只有一个或零个child，那么我们选中的这个节点(elf或cat)，就不是左子树最大或右子树最小的，cat的左child会比它更小，而elf的右子树会比它更大。
+    - 一个child的情况下，让待删除节点的parent指向其child。
+    - **不要采用将待删除节点的child的<Key,Value>覆盖到待删除节点的方法来删除节点，可能会出错。就老实一点。**
+      - 非要采用的话记得将child的left和right指针也覆盖到待删除节点的对应项去。
+
+![image-20220211220025327](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202112200615.png)
+
+- 关于图里的why：如果不是只有一个或零个child，那么我们选中的这个节点(elf或cat)，就不是左子树最大或右子树最小的，cat的左child会比它更小，而elf的右子树会比它更大。
 
 ![image-20211129163032866](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291630070.png)
 
@@ -386,13 +392,59 @@ $ git pull origin master
 
 
 
-# Lecture 17
+# Lecture 17 B-Trees (2-3, 2-3-4 Trees)
 
 ![image-20211129190158416](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291901605.png)
 
 ![image-20211129195845383](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111291958573.png)
 
 ![image-20211129200834736](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111292008914.png)
+
+
+
+![image-20220209210924717](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202092109993.png)
+
+![image-20220209211029119](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202092110348.png)
+
+
+
+![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202092208090.png)
+
+![image-20220209221622581](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202092216800.png)
+
+# Lecture 18 Red Black Trees
+
+- Bad news About B-Tree：
+  - 需要维护不同的节点类型（一个节点里可能有1、2、3）个值。
+  - 不同节点类型直接的转换，如L等于2时，临时3值节点到2值节点的转换。
+
+![image-20220213201847414](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202132018686.png)
+
+- 因此引出红黑树，更加简单且更加快的数据结构。
+- 通过树的旋转，可以在具有相同节点个数的树的不同状态间转换。如下图可以通过旋转在这5中状态间转换。
+  - 还有一个描述具有N个节点的二叉树具有的可能的形态的个数的`Catalan(N)`
+  - 可以在`2n - 6`次旋转之内从一个状态转移到任何其他可能的状态。
+    - 因此如果给定一棵极度不平衡的树，存在一个旋转的序列将它变成一棵平衡的树。
+
+![image-20220213202542968](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202132025209.png)
+
+- 树的旋转：
+  - 以左旋为例：记X为G的右子节点，旋转使得G称为X的新左子节点。
+  - 下图示例，可以看作G和P暂时合并，然后再分裂。
+  - 仍然会保持二叉树的属性，在这个示例中树的高度增加了。
+
+![image-20220213203229765](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202132032006.png)
+
+- 右旋： 记X为P的左子节点，旋转使得P成为X的新右子节点。
+- 示例降低了树的高度。
+
+![image-20220213203618068](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202132036291.png)
+
+- 一个示例，说明如何通过一系列旋转使得树变成平衡状态。
+
+![image-20220213203909365](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202132039570.png)
+
+
 
 
 
@@ -596,6 +648,44 @@ $ git pull origin master
 
 
 
+# Lecture 27 Software Engineering I
+
+- 什么是复杂度
+  - 复杂度的定义是以人为中心的。
+
+![image-20220213150056728](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202131501033.png)
+
+- 复杂度的表现：
+  - 代码修改膨胀：为了实现软件的某个改变，你可能需要去修改许多处代码。
+  - 认知负担：为了实现改变你需要知道的东西有多少。
+  - 未知的未知：你甚至不知道为了实现改变你需要知道什么。
+
+![image-20220213154426885](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202131544147.png)
+
+- 复杂度是慢慢积累起来的。
+  - 每次引入的复杂度都不算大问题，可能只是一个特殊情况的`if`，可能只是一个`workaround`。但是会积累。
+  - 在屎山将现的时候重构代码。
+
+![image-20220213155016928](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202131550183.png)
+
+- 短平快的编程：
+
+![image-20220213160216911](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202131602157.png)
+
+- 从战略全局考虑的编程：
+
+![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202131605834.png)
+
+![image-20220213160623566](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202131606811.png)
+
+![image-20220213160835138](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202131608376.png)
+
+# Lecture 28 Reductions and Decomposition
+
+
+
+
+
 # Lecture 29 basic sort
 
 # Lecture 30 QuickSort
@@ -611,6 +701,8 @@ $ git pull origin master
 ![image-20211214200940939](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202112142009287.png)
 
 
+
+# 
 
 # Lecture 35 Radix Sort
 
