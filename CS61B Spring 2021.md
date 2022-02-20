@@ -1,4 +1,4 @@
-CS61B Fall 2020
+BSTCS61B Fall 2020
 
 算是二刷吧。神课总是值得二刷的。
 
@@ -313,6 +313,15 @@ $ git pull origin master
 ```
 
 # Project 1
+
+
+
+
+
+**这些都是没有更新的，有一些思考可能有点问题，于2022.2.1重新写了一遍Project1但是并没有更新笔记**
+
+**关于Resize的部分的思考还是看源代码的注释比较好。**
+
 ## ArrayDeque
 
 ### Resize的问题
@@ -431,7 +440,7 @@ $ git pull origin master
 - 树的旋转：
   - 以左旋为例：记X为G的右子节点，旋转使得G称为X的新左子节点。
   - 下图示例，可以看作G和P暂时合并，然后再分裂。
-  - 仍然会保持二叉树的属性，在这个示例中树的高度增加了。
+  - 仍然会保持BST树的属性，在这个示例中树的高度增加了。
 
 ![image-20220213203229765](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202132032006.png)
 
@@ -444,9 +453,117 @@ $ git pull origin master
 
 ![image-20220213203909365](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202132039570.png)
 
+- 红黑树的定义：
+  - BST树：实现起来容易，会变得不平衡，但是可以使用旋转来平衡，但是目前我们还没有算法。
+  - 2-3树：从结构上来说就是平衡的，也就是不需要旋转。
+  - 试图结合起来二者的优点：建立一棵BST树，使得它在结构上与一棵2-3树完全对应。由于2-3树是平衡的，我们这棵奇怪的BST树也会是。
+    - 因此引出，如何用一棵BST树来表现一棵2-3树。
+
+![image-20220214202037658](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142020885.png)
+
+- Representing a 2-3 tree as a BST：
+  - 只有两个子节点的2-3树和BST是一模一样的。关键是具有3个子节点的2-3树怎么办。
+
+![image-20220214202538205](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142025432.png)
+
+- 使用**glue link**来呈现`3-node`，将这个`glue-link`标记为红色。正常的`link`标记为黑色。
+
+![image-20220214203012019](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142030262.png)
 
 
 
+- 关于红黑树的一些说明：
+  - 在课程中我们永远选择把假象出来的`glue-link`放在靠左边，称作左倾红黑树。
+  - LLRB就是正常的BST树。
+  - 在一棵2-3树和一棵LLRB之间存在1-1对应。
+  - 红色的`link`只是一个方便的假想，红色链接并不会起任何特殊的作用。
+
+![image-20220214204602504](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142046764.png)
+
+- 红黑树的一些属性：
+  - 查找key值，把红黑树当成一棵BST来对待就好。
+  - 左倾红黑树的属性看图。
+  - **红黑树的高度的最大值大概就是与之相对应的2-3树的高度的2倍，因此红黑树的高度也是对数的。**
+
+![image-20220214214057737](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142140986.png)
+
+- 关于红黑树的合法性：
+  - 第三个不是合法的是因为它本身对应的2-3树不是平衡的（一棵B树的叶子层永远是等深度的，所以第二个也是不平衡的）。
+
+![image-20220214205941044](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142059290.png)
+
+- **红黑树的建造：**
+  - 并不是先建立一棵2-3树然后在转换成一棵红黑树。
+  - 而是插入一棵BST树然后通过旋转保持**左倾**红黑树属性。
+
+![image-20220214214503767](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142145009.png)
+
+- 建造红黑树的例子：插入的时候假装自己是那棵与自己对应的2-3树。
+  - 例子1：**无论何时，对一棵红黑树插入一个节点时，都是使用红色的链接（也许后面可能会进行翻转，但是插入的那一瞬间就是用红色的）。**
+
+![image-20220214215315775](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142153009.png)
+
+- 例子2：
+  - 插入S的时候用`红色link`（假装部分，如果你是2-3树你会怎么做），**由于我们要得到左倾红黑树，所以对第二种形态进行旋转**（旋转部分）。
+
+![image-20220214215032069](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142150307.png)
+
+- **例子3**：由于B树在插入时会出现那种暂时的4-node（也就是2-3树的某个节点会暂时性的出现有3个值在里面，然后随后进行节点的分裂）
+  - 这个例子就是在相应的红黑树中也允许临时性的出现这种不合法的情况。 
+  - 使用具有两个`暂时性的红色link`的节点来表现这种情况。
+  - **并且两个红色的link一个左倾一个右倾，也就是说允许暂时性的破坏左倾要求。**
+  - **并且只允许同一个节点的两个红色link一个左倾一个右倾，不能出现连续两个左倾redlink。**
+
+![image-20220214215658911](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142156167.png)
+
+- **例子4**：连续的两个左倾红色`link`怎么处理。
+  - 这个例子第一个关键点：按照BST的规则插入E之后是第二个状态，属于是暂时性的4-node，但是这个状态和上个例子所提到的长得不一样。
+  - 所以进行旋转。但是还是没有到B树分裂的那一步。
+  - **关于为什么要进行这一步的旋转：因为我们的最终目的是得到稳定形态的2-3树，而不是现在这个具有临时4-node的B树。旋转之后得到的第三个状态是可以通过`flip()`得到最终目的的，这一步的旋转就是为了将形态二变成可以翻转的形态3**
+
+![image-20220214220057683](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142200933.png)
+
+- 例子5：由于暂时性的`4-node`在随后是需要进行`split()`的，也就是节点分裂，所以红黑树也需要去表现相应的过程。
+  - 第二个关键点：如何去处理临时性非法的红黑树。也就是如何在得到第三个状态之后，去模仿2-3树的分裂过程。
+  - 进行颜色的翻转。将所有与节点B接触的`link`的颜色翻转。
+  - 如何想到的？
+  - 很简单，画出分裂后的2-3树的形态，然后画出它对应的左倾红黑树的形态，观察一下就会发现节点B的各个`link`的颜色刚好翻转了。
+
+![image-20220214220734495](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142207754.png)
+
+- 至此，我们就发明了红黑树。一些关于上述例子的总结。
+  - 红色链接右倾：左旋。
+  - 连续两个左倾红色链接：右旋。
+  - 红色链接一左一右：颜色翻转。
+  - 此外还有最后一个细节，有可能一次旋转或者翻转操作会导致一个额外的需要修复的错误。
+    - 比如如果翻转后得到的`redlink`恰好是右倾而不是左倾的。(例子5翻转后的`redlink`恰好是左倾的。)
+    - 例子6。
+
+![image-20220214222052882](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142220136.png)
+
+
+
+- 例子6。
+  - 翻转模仿B树分裂过程，修复临时性4-node问题。但是出现了新的问题，新得到的`redlink`是右倾而不是左倾的。
+  - 所以左旋B。
+
+![image-20220214222426009](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142224274.png)
+
+![image-20220214222557901](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142225156.png)
+
+- [LLRB/2-3TreeInsertionDemo](https://docs.google.com/presentation/d/1jgOgvx8tyu_LQ5Y21k4wYLffwp84putW8iD7_EerQmI/edit#slide=id.g463de7561_042)
+
+- 总结：
+  - 运行时间基本上都是`logN`。
+  - 删除不讲。较难
+  - Java的内置TreeMap是红黑树，只不过是对2-3-4树的映射。也不是一一对应的，更复杂的工作，更快的速度。
+  - 还有其他很多种类型的树，实现Map也还有其他很多种方法，比如Hash。
+
+![image-20220214232437080](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142324312.png)
+
+![image-20220214232817837](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142328091.png)
+
+![image-20220214233239561](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202142332800.png)
 
 # Lecture 19 Hashing
 
@@ -577,14 +694,138 @@ $ git pull origin master
 
 
 
+# Lecture 20 Heaps and PQs
+
+- 优先队列接口。
+  - 并不一定是要是最小，可以是各种的最，最好，最大。
+
+![image-20220215145049657](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202151450958.png)
+
+- 一些可能的实现：但都不太理想，各有缺点。
+
+![image-20220215162604179](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202151626439.png)
+
+- **引入堆：堆是一颗二叉树，但不是BST。**遵循堆的性质，并且是完备的。
+  - 最小堆性：每个节点都小于或等于它的两个子节点。
+    - 图四节点5不满足。
+  - 完备性：缺失的节点只会出现在最底层（如果有的话），并且所有的节点都尽可能的靠左放置（也就是缺口会尽量靠右）
+    - 也就是说，每个节点都应该有两个子节点，除非它的子节点刚好是处于最底层的。
+    - 图三缺口就应该是靠右的。
+
+![image-20220215163409388](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202151634670.png)
+
+
+
+- 堆非常适合实现优先队列。
+- 各个堆运算的实现：
+  - `getSmalless()`：返回根节点的值。
+  - `add(x)`：先把临时性的放在最底层(**最靠左的空位，也就是遵循堆的完备性**)，然后把它一层层往上移，直到找到合适的位置。
+  - `removeSmallest()`：先临时把最底层最右侧的节点替代掉根节点，然后把根节点向下移动，直到找到合适的位置。
+  - [Demo:插入和删除](https://goo.gl/wBKdFQ)
+
+![image-20220216143737111](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161437427.png)
+
+- Java中的堆的实现
+- 首先是树的各种实现，并不只有BST的那种实现方法。
+- 第一大类：直接保存从节点到子节点的引用。
+  - 第一种：一个节点包含四个域：Key ，左、中、右子节点的引用。
+  - ![image-20220216145356362](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161453500.png)
+  - 第二种：两个域：Key和一个子节点的数组，这个实现方法可以用来实现多叉树，使得一个节点可以有任意多个子节点。
+  - ![image-20220216145531478](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161455620.png)
+  - 第三种：每个节点有三个域，一个Key，一个指向它的最左侧子节点，一个域指向它的亲兄弟节点。
+  - ![image-20220216145640249](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161456380.png)
+  - 对同一棵树有不同的实现方法。
+  - ![image-20220216145920120](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161459260.png)
+- 第二大类：不直接保存节点到子节点的引用，而是对节点进行层序编号。
+  - 第一种：类似对并查集的实现。parents[i] 存储的就是keys[i]的父节点。
+  - ![image-20220216150214145](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161502281.png)
+  - 第二种：只适用于**完全树**，因为直接省去了parents数组。由于parents数组永远是00011223344这样下去，所以对完全树可以直接省去。
+  - ![image-20220216151147345](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161511481.png)
+
+- 这最后一种就是Java中堆的实现方式了。因为堆是完备的（所有的节点都是尽可能靠左的，所以parents数组不会在中间出现缺口）
+  - swim的实现方法。
+  - parent的实现方法。
+  - 这种实现方法代码简单，使用的内存大概是指针映射（第一类）的三分之一。
+
+![image-20220216152934437](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161529573.png)
+
+- 总结：
+  - 堆很适用于实现优先队列。而BST则不太适合，因为BST要求所有的插入的值必须是能够分个大小的，处理不了相等值的情况。
+  - **堆的增加和删除是对数级别复杂度的，但是是均摊的，因为涉及数组的`resize()`**。
+
+![image-20220216153503258](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161535391.png)
+
+- 关于优先队列还有一些小问题
+  - 一个优先队列怎么知道如何去确定在队列中的哪个项更大？这个问题有两个解。
+    - 一是限制我们的类型参数是`Comparable`的。`<Item extends Comparable<Item>>`这个是默认的行为。
+    - 二是实现一个构造器，这个构造器有一个参数是一个`Comparator`。
+
+![image-20220216154215882](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161542021.png)
+
+
+
+- 最后就是关于数据结构的一些总结了
+
+![image-20220216165003471](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202161650615.png)
+
+
+
+# Lecture 21 Tree and Graph Traversals
+
+- 三种深度优先遍历、层序遍历
+
+![image-20220216221515301](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202162215454.png)
+
+- 三种深度优先遍历的快速方法。
+  - 前序：经过左边的时候。
+  - 中序：经过底下的时候。
+  - 后序：经过右边的时候。
+
+![image-20220216221854841](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202162218976.png)
+
+- 三种深度优先遍历的使用例子
+  - 先序遍历：打印目录
+  - ![image-20220216224551915](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202162245058.png)
+  - 后序遍历：计算目录总大小
+  - ![image-20220216224621531](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202162246667.png)
+
+
+
+- 图的深度优先遍历
+  - 首先是一个s-t连通性问题。也就是给定起点和终点，求一条连通路径。[demo](https://docs.google.com/presentation/d/1OHRI7Q_f8hlwjRJc8NPBUc1cMu5KhINH1xGXWDfs_dA/edit?usp=sharing)
+
+![image-20220217112609193](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171126345.png)
+
+- 给定起点s，求从s到任意其可到达的定点的路径。[demo](![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171229374.png))
+
+![image-20220217122847777](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171228915.png)
+
+![image-20220217122933238](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171229374.png)
+
+- 关于树和图的遍历的对比。
+  - **图的遍历是不具有唯一性的，而树的遍历具有唯一性**。
+  - 图的深度优先遍历同样有前序和后序。此外还有广度优先遍历。
+  - 前序：操作先于调用。
+  - ![image-20220217125248352](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171252505.png)
+  - 后序：操作后于调用
+  - ![image-20220217125325360](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171253696.png)
+  - 广度优先：按从起点到节点的距离的顺序来遍历，先遍历距离为1的所有节点，然后距离为2的..
+  - ![image-20220217125420558](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171254713.png)
+
+
+
+
+
+
+
 # Lecture 22 Graph Traversals and Implementations
 
 - 只适用于无权图，在这里的图都是没有带权的。
 - 所以不能拿来给地图应用做定位算法捏，因为每条路的长度不一定一样。
   - 广度优先算法求某点到任意点的最短路径
-  - 使用一个队列。
+  - 使用一个队列。[demo](https://docs.google.com/presentation/d/1JoYCelH4YE6IkSMq_LfTJMzJ00WxDj7rEa49gYmAtc4/edit?usp=sharing)
 
-![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/20211227155345.png)
+![image-20220217182916301](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171829456.png)
 
 ## Graph API
 
@@ -702,7 +943,70 @@ $ git pull origin master
 
 
 
-# 
+# Lecture 31 Software Engineering II
+
+- 一个短视性编程的例子，就是最后一个project。
+  - 很多代码是相似的，完全可以抽象成一个`helper method`
+    - 比如if括号内的判断是否达到边界的后一个条件，完全可以抽象成`private boolean hasReachedTheEdge(.....)`
+    - 以及if正文内的相似代码，也可以抽象成一个函数。
+  - 所有的行为都发生在一个抽象程度比较低的层级，不好理解。
+  - 如果找到问题想要修改就很麻烦，因为要修改多处。
+  - 条件很长并且很难读懂。完全可以抽象成`helper method`
+  - 很多数值是硬编码的。
+  - 没有注释
+
+![image-20220217184618540](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171846676.png)
+
+- 修改的一些例子
+
+![image-20220217185004249](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171850383.png)
+
+- 复杂度的两个来源
+  - 相互依赖性（耦合度）：代码不能被独立的读、理解和修改。
+  - 晦涩程度：重要信息不明显。
+
+![image-20220217200227343](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172002465.png)
+
+- 第二个例子：处理不同的输入方式，字符串输入还是键盘输入。
+
+![image-20220217201001276](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172010418.png)
+
+- 接下来是关于模块化设计
+
+![image-20220217201337052](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172013180.png)
+
+- 在建造程序时一个非常重要的事情是隐藏复杂度。因为人没办法一次性理解所有的复杂度。所以需要封装复杂度来保证程序员一次只考虑一部分复杂度。
+- 理想的情况：系统被分解成许多模块，模块与模块直接完全独立。
+  - 模块可以是一个类，一个接口，一个包，一个代码单元。
+  - 但是模块不可能完全独立，因为模块与模块之前是需要通信的，至少需要方法调用。
+  - 所以我们的目标是最小化模块之间的依赖关系。
+  - ![image-20220217201943605](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172019730.png)
+
+![image-20220217202358671](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172023793.png)
+
+
+
+![image-20220217202409071](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172024200.png)
+
+![image-20220217202420994](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172024117.png)
+
+- 尽可能的隐藏信息，避免信息泄漏。
+  - 所谓信息泄漏就是类似的代码出现在许多模块中，于是修改时就要修改许多处。
+
+![image-20220217202845788](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172028908.png)
+
+![image-20220217202944602](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172029730.png)
+
+- 避免**TemporalDecomposition**:
+  - In temporal decomposition, the structure of your system reflects the order in which events occur.
+
+![image-20220217203547154](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172035294.png)
+
+![image-20220217203537154](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202172035285.png)
+
+# Lecture 33 Software Engineering III
+
+- 很强的人文关怀，我永远喜欢UCBerkeley
 
 # Lecture 35 Radix Sort
 
@@ -714,3 +1018,113 @@ $ git pull origin master
 - Runtime Analysis for CountingSort
 
 ![image-20211228140455908](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211228140455908.png)
+
+# Lecture 37 Software Engineering IV
+
+- 飘着听完的，讲了一些CS 61 B的进化史，一些课程评价。没什么知识性的东西
+
+# Lecture 38 Compression
+
+- 这堂课讲的是关于压缩的，比如文件压缩。
+- 先建立了一个压缩模型：
+  - 给定一串比特串，经过一个压缩算法得到压缩后的比特串。
+  - 压缩后的比特串经过解压缩算法得到原始的比特串。
+  - 我们假定这个过程信息是无损的。
+    - 即便这种情况下文本文件也可以压缩百分之七十。
+
+![image-20220218212212647](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202182122808.png)
+
+- 优化编码的方式：
+  - 使用更短的编码。
+  - 当然，要编码和符号对应。
+
+![image-20220218220236627](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202182202773.png)
+
+- 摩斯码是一种编码的方式，但是它的问题是，某一个符号的编码可能是另外一个符号的编码的前缀。
+  - 这样会导致我们收到的压缩后的信息解压后存在歧义。
+  - 实践中不存在，因为可以进行人为停顿。
+  - 但是电脑中没办法这样作弊，所以我们需要无前缀编码。
+    - 也就是任意一个字符的编码都不可能是另外一个字符的前缀。
+  - 摩斯码的编码树体现了这一点：
+
+![image-20220218220627906](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202182206057.png)
+
+- 如果把编码写成树的形式，所有的字符都是处于叶子节点上，那么这个编码应该就是一个无前缀编码。
+- ![image-20220218220911475](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202182209619.png)
+- ![image-20220218220849813](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202182208954.png)
+
+- 对于无前缀编码又引入了一个设计问题:
+  - 某些编码设计针对某些文本，可能比其他的编码设计要好。
+    - 比如EEEAT，左边的编码方式比右边好。
+    - 而对于JOSH，右边的编码方式比左边好。
+  - 所以我们可能需要找到一个流程，这个流程能够找到给定字符串的最佳编码方式。
+
+![image-20220218223943776](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202182239918.png)
+
+- `shannon fano code`：
+  - 三个节点分开时，权重最大的那一个节点单独作为一半。
+  - **但是香农凡诺编码并不是最优的，它能用，但是可以找到更好的。**
+  - 更好的是`huffman coding`。
+
+![image-20220219121422416](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191214566.png)
+
+![image-20220219121348483](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191213669.png)
+
+![image-20220219121402912](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191214061.png)
+
+- 霍夫曼编码
+
+![image-20220219153911510](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191539673.png)
+
+![image-20220219153929962](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191539101.png)
+
+- 关于霍夫曼编码的效率与Unicode的对比。
+
+  - ###### 使用霍夫曼编码大概是14倍的效率
+
+![image-20220219154026399](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191540539.png)
+
+- 关于霍夫曼的编码与解码：
+  - 编码：使用从符号到编码的Map来映射，或者使用符号(的ASCII，etc)作为索引的编码的数组。
+  - ![image-20220219154840490](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191548638.png)
+  - 解码：使用前缀树，try。解码时寻找最长的匹配前缀。
+  - ![image-20220219154937591](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191549727.png)
+
+- 有关于霍夫曼编码的实践问题：
+  - 对于霍夫曼编码，有两种使用霍夫曼压缩的方法。
+    - 第一种，对不管什么类型的输入，不管什么文件，英文也好中文也好，每一类建立一个标准的编码，英语一类，中文一类。
+    - 第二种，仅针对输入的文件，对于每一种可能的输入文件，创建一个只适用于它的独一无二的编码。将编码和已压缩的文件
+  - 两种编码方法的优缺点：
+    - 第一种：我们无法得到最佳编码，因为不同的文件可能相同的字符所占的权重并不是一样的，而这种情况可能才是最常见的。所以强行忽略不同输入文件中相同字符的权重不同来建立一个统一的编码库，无法得到最佳编码，也即无法极限压缩。
+      - 举个极端一点的例子，可能某一个文件全是字符A，另外一个文件全是字符B，我们给这俩字符都恰好使用4位的编码。但是实际上只针对这一个文件，一位的压缩编码就是足够的。
+    - 第二种：我们会需要额外的空间，因为要把编码表也发送过去。
+    - **实践采用的往往是第二种，因为很多时候，包含编码表的花费对于整个文件来说是微不足道的。**
+      - 举个例子，有一个很大的英文文本，我们针对它使用了第二种方法，压缩之后减少了10兆，但是这个编码表本身可能也就KB大小。
+
+- 霍夫曼编码和解码实例：
+  - 编码：[demo](https://docs.google.com/presentation/d/1DWuSkE9MxQPUTjbSJCMe54rCim4eAwM4aFRvhqq5_Hs/edit#slide=id.g2159afc5e6_0_1068)
+    - 1.计算各个符号的权重。
+    - 2.建立编码数组和阶码前缀树
+    - 3.将阶码前缀树写入输出文件
+    - 4.将编码也写入输出文件。
+  - ![image-20220219170512286](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191705456.png)
+  - 解码：[demo](https://docs.google.com/presentation/d/1DWuSkE9MxQPUTjbSJCMe54rCim4eAwM4aFRvhqq5_Hs/edit#slide=id.g2159afc5e6_0_1068)
+    - 1.读入解码前缀树。
+    - 2.根据前缀树使用最大匹配前缀得到相应符号。
+  - ![image-20220219170731362](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191707526.png)
+
+- Summary：[Huffman.java](http://algs4.cs.princeton.edu/55compression/Huffman.java)
+- ![image-20220219171012200](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191710340.png)
+
+- Compression Theory:
+
+  - 世界上除了霍夫曼还有许多种其他的压缩方式。
+  - Run Length Encoding：行程长度压缩法，即根据字符串的连续重复字符进行编码的一种方法。
+    - 处理处理连续重复字符串的效果较佳，最差的情况就是没有连续的字符，这样的话除了没有压缩不算，而且还增加了字符串的长度
+
+  ![image-20220219183017649](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191830817.png)
+
+- 关于压缩模型的改进：将解压的代码也加入到最终的输出文件中去。
+
+![image-20220219183901706](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191839859.png)
+
