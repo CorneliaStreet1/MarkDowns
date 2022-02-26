@@ -820,39 +820,71 @@ $ git pull origin master
 
 # Lecture 22 Graph Traversals and Implementations
 
-- 只适用于无权图，在这里的图都是没有带权的。
-- 所以不能拿来给地图应用做定位算法捏，因为每条路的长度不一定一样。
+- 广度优先算法
+  - 只适用于无权图，在这里的图都是没有带权的。
+  - 所以不能拿来给地图应用做导航算法捏，因为每条路的长度不一定一样。
   - 广度优先算法求某点到任意点的最短路径
-  - 使用一个队列。[demo](https://docs.google.com/presentation/d/1JoYCelH4YE6IkSMq_LfTJMzJ00WxDj7rEa49gYmAtc4/edit?usp=sharing)
+  - 使用一个队列。队列里的元素要么是距原点等距K的，要么是K + 1 的
+  - 即使没有`edgeTo[]`和`distTo[]`也是广度优先。
+  - [demo](https://docs.google.com/presentation/d/1JoYCelH4YE6IkSMq_LfTJMzJ00WxDj7rEa49gYmAtc4/edit?usp=sharing)
+
 
 ![image-20220217182916301](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171829456.png)
 
 ## Graph API
 
-![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227160652313.png)
+- 我们需要：
+  - 图的底层表示
+  - 图的合适的API
 
-![image-20211227161022276](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227161022276.png)
+- ![image-20220226160940546](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261609812.png)
 
-![image-20211227161429317](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227161429317.png)
+
+- 第一个简化：
+  - 对图的节点编号，不考虑图的标签。实现图的时候也是使用相应的编号。
+  - 将节点的标签和编号用Map<Label,Integer>映射。
+- ![image-20220226161201804](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261612049.png)
+- Graph API：
+  - 构造器必须提前给定节点的个数，并且节点的个数是固定不变的。
+  - 可以在v号节点和w号节点之间添加边，但是不允许向图中添加节点。
+  - `adj(int v)`返回的是`v`号节点的所有相邻节点，这些邻居保存在一个可迭代的容器中，如`ArrayList<Integer>`。
+    - Iterable的类型参数之所以是整数是因为所有节点都是用编号呈现的。
+  - 不支持有权的节点或边。
+  - 没有求度的方法，但是可以借助API实现。
+    - ![image-20220226162450304](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261624531.png)
+  - 可以得到图的节点数和边数。
+  - 可以借助API实现打印图的所有边的方法。
+    - ![image-20220226162504871](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261625079.png)
+
+![image-20220226161649746](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261616008.png)
 
 ## Graph Representations
 
 - 邻接矩阵
   - 使用一个二维`boolean`矩阵
   - 有一个复杂度问题没看。
+  - ![image-20220226163036748](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261630195.png)
 - HashSet< Edge >：边的HashSet，每条边是一对int
 
 ![image-20211227164044065](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227164044065.png)
 
 
 
-- Adjacency List：
+- Adjacency List：邻接表
+  - Vertex Indexed Array
 
-![image-20211227164311658](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227164311658.png) 
+
+![image-20220226163619371](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261636771.png) 
+
+- 一个思考题：打印一幅图的时间复杂度。以及一些特殊情况下复杂度的简化。
+
+![image-20220226164248812](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261642243.png)
+
+![image-20220226164318149](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261643749.png)
 
 ## Runtime Analysis
 
-![image-20211227165822302](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227165822302.png)
+![image-20220226164427183](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261644659.png)
 
 
 
@@ -888,6 +920,73 @@ $ git pull origin master
 ![image-20211227210845708](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227210845708.png)
 
 
+
+# Lecture 26 Prefix Operations and Tries
+
+- Tries的基本思想：
+  - **Tries可以是一个<String(key),Integer>的Map，Value部分帮助我们确定字符串出现了几次。也可以是一棵Tree**
+  - 将字符串中的每一个字符都保存为树中的一个节点。
+  - 每个节点只保存一个字符。
+  - 同一个节点的字符可以被多个不同的字符串共享。
+
+![image-20220225165052362](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251650557.png)
+
+- 一个Tries的树的示例：
+  - **将每个字符串的结尾的字符节点标位了蓝色来表示是字符的结尾。解决了下图底部提出的问题**
+
+![image-20220225170038011](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251700154.png)
+
+![image-20220225170156889](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251701033.png)
+
+- Trie Map :[demo](http://www.cs.princeton.edu/courses/archive/spring15/cos226/demo/52DemoTrie.mov)
+
+![image-20220225175347676](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251753826.png)
+
+- Trie Implemention
+
+  - DataIndexedCharMap< V >作为记录节点的子节点的一个Map。
+
+  - ![image-20220225175600046](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251756182.png)
+  - `isKey`，就是节点是蓝色还是白色。
+  - `next`是节点的子节点的合集，包含128个单元，大部分会是`null`，这也是我们后续要解决的问题。
+  - ![image-20220225180309674](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251803815.png)
+  - 下图是一个关于`a、aw`两个字符串的节点的图。`next.items[w]` 保存着保存`w`的那个节点。
+  - ![image-20220225180448143](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251804279.png)
+  - 对上图的实现做一些改进，由于`items[]`的下标本身就是那个字符，所以可以把`ch`域去掉。
+  - ![image-20220225180910076](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251809218.png)
+- RunTime Analysis：
+  - 都是常数时间，复杂度与关键词的个数无关。因为你永远都只需要去走那包含特定几个字符的一条路径。
+    - 例如contains("Potato"):P --> o-->t--->a-->t-->o。
+  - ![image-20220225181539123](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251815270.png)
+- 接下来是对`next`的一些改进：
+  - 使用BSTMap：内存上更有效率，时间上可能会差一点，毕竟BST是log的
+  - ![image-20220225184107384](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251841529.png)
+  - 使用HashMap：时间上可能稍微差一点点，毕竟是均摊的O(1)
+  - ![image-20220225184120667](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202251841806.png)
+- Tries的真正的特殊用处在于一些字符串的特殊运算：
+  - 前缀匹配
+
+
+- 一个练习：如何将tries里的所有关键字都取出：
+
+![image-20220226150918503](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261509853.png)
+
+- 搜索引擎中的自动补全是如何完成的：
+
+  - 建立一个`TrieMap< Integer >`：权值决定了字符串的重要程度。
+  - 调用前缀匹配函数，并返回权值最高的几个字符串。
+
+  - ![image-20220226151117037](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261511287.png)
+  - 但是这样的方法有一个致命缺陷：当输入的字符很短时与之前缀匹配的字符串很多，我们可能需要从一个很大的数据集中寻找到最优的十条。
+  - ![image-20220226152656535](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261526768.png)
+  - 解决方法：每个节点保存它自身的值，以及它的最佳子串的值。
+  - ![image-20220226152808738](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261528982.png)
+  - 甚至跟高效的tries：对于那种无分支的节点，合并起来。
+  - ![image-20220226152916601](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261529847.png)
+
+- Summary：
+
+![image-20220226152942961](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202261529218.png)
 
 # Lecture 27 Software Engineering I
 
@@ -1128,3 +1227,6 @@ $ git pull origin master
 
 ![image-20220219183901706](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202191839859.png)
 
+# Lecture 39 Compression, Complexity, and P=NP?
+
+- 太难啦！！！
