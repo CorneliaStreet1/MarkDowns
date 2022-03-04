@@ -2,7 +2,7 @@ BSTCS61B Fall 2020
 
 算是二刷吧。神课总是值得二刷的。
 
-# Lecture 1
+# Lecture 1 Intro, Hello World Java
 
 关于课程安排
 
@@ -63,18 +63,18 @@ assertTrue(changed);
 }
 ```
 
-# Lecture 5
+# Lecture 5 SLLists, Nested Classes, Sentinel Nodes
 
 - 2D数组采用的也是行优先，每一个数组单元存储的是某一行数组的指针。
 
-# Lecture 7
+# Lecture 7  ALists, Resizing, vs. SLists
 
 - ArrayList，删除的时候不要`lazy deletion`，因为使用这种策略会导致要删除的内容仍然被保留
 - 如下图，要删除item[2]，如果只是改变size，那么那副红色图片仍然存在。
 
 ![屏幕截图 2021-11-14 215524](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202111142156560.png)
 
-# Lecture 9
+# Lecture 9  Extends, Casting, Higher Order Functions
 
 - HOFDemo:
 
@@ -797,6 +797,8 @@ $ git pull origin master
 ![image-20220217112609193](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171126345.png)
 
 - 给定起点s，求从s到任意其可到达的定点的路径。[demo](![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171229374.png))
+  - 深度优先搜索。
+
 
 ![image-20220217122847777](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202171228915.png)
 
@@ -823,7 +825,7 @@ $ git pull origin master
 - 广度优先算法
   - 只适用于无权图，在这里的图都是没有带权的。
   - 所以不能拿来给地图应用做导航算法捏，因为每条路的长度不一定一样。
-  - 广度优先算法求某点到任意点的最短路径
+  - **广度优先算法求某点到任意点的最短路径。**这里的最短指的是经过的边的数目最小。
   - 使用一个队列。队列里的元素要么是距原点等距K的，要么是K + 1 的
   - 即使没有`edgeTo[]`和`distTo[]`也是广度优先。
   - [demo](https://docs.google.com/presentation/d/1JoYCelH4YE6IkSMq_LfTJMzJ00WxDj7rEa49gYmAtc4/edit?usp=sharing)
@@ -890,34 +892,166 @@ $ git pull origin master
 
 ## Graph Traversal Implementation And Runtime Analysis
 
-![image-20211227171535237](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227171535237.png)
+- 图的算法的通常的设计模式不是在`Graph`类里面实现各种方法，而是`Graph`类里只有存粹的呈现`Graph`有关的东西。
+  - 将类型与算法分离。另起一个类，让这个类来负责图的有关算法的进行（这个类就是伟大的图中全能神）。
+  - 创建一个图对象，并传给全能神，向全能神索引图的信息。
+  - ![image-20220228152548630](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281525829.png)
 
-![image-20211227171919585](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227171919585.png)
+- 深度优先的实现：
+  - ![image-20220228153740160](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281537316.png)
+  - ![image-20220228153754963](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281537105.png)
 
-![image-20211227172719650](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227172719650.png)
+- Runtime Analysis
+  - ![image-20220228153845881](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281538023.png)
+  - ![image-20220228153904061](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281539199.png)
 
-![image-20211227173009632](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227173009632.png)
 
-![image-20211227173256131](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227173256131.png)
+
+- 广度优先的实现：
+  - ![image-20220228154005843](C:/Users/jiangyiqing/AppData/Roaming/Typora/typora-user-images/image-20220228154005843.png)
+
+- 复杂度分析：
+  - ![image-20220228154028498](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281540645.png)
 
 ## Summary
 
-![image-20211227174703049](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227174703049.png)
+![image-20220228154144560](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281541727.png)
 
-![image-20211227174757403](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227174757403.png)
+![image-20220228154215738](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281542875.png)
 
 # Lecture 23 Shortest Paths
 
-- 优先队列可以换成一个Array，要找最小的只需要Iterate through it。
-  - 适用于权值不存在负值的情况
+- [DFSDemo](https://docs.google.com/presentation/d/1lTo8LZUGi3XQ1VlOmBUF9KkJTW_JWsw_DOPq8VBiI3A/edit?usp=sharing)
+- [BFSDemo](https://docs.google.com/presentation/d/1JoYCelH4YE6IkSMq_LfTJMzJ00WxDj7rEa49gYmAtc4/edit?usp=sharing)
 
-![image-20211227204425952](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227204425952.png)
+![image-20220228155517766](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281555912.png)
 
-![image-20211227205013138](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227205013138.png)
+- 深度优先和广度优先，哪一个更好？
+  - 两种都适用于所有的无权图。
+  - 使用广度优先搜索的情况下，不仅得到了路径，并且得到的边的数目是最短的。
+  - 二者的时间效率相差不大。
+  - ![](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281601658.png)
+  - 空间效率上：
+    - DFS针对细长的图时差一点。因为递归的原因，调用栈会非常的深。
+    - DFS针对一个节点有巨大数量的邻接点时不太行。
+    - ![image-20220228160216597](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281602740.png)
 
-- 复杂度，先记着吧 分析不动了
+- **还是想特别提醒一下，BFS得到的最短路径的最短指的是路径的数目最短。**
+  - ![image-20220228163631294](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281636460.png)
 
-![image-20211227210845708](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/image-20211227210845708.png)
+
+
+- ![image-20220228195643309](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281956448.png)
+  - 适用于有向和无向图。用于有权图的寻找起点到所有可达点的最短路径。
+  - **不考虑有环图，也不考虑某一条边的权值为负。**
+  - **从源点到其他任意可到达点的路径的集合在图上画出来总会是一棵树(Shortest path tree,SPT)。**
+    - ![image-20220228195914575](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202281959736.png)
+  - **最短路径所构成的树永远有 `V - 1` 条边。这是因为除了源点，其他的点都有且仅有一条从其他地方指向该点的入路径。**
+    - ![image-20220228200139548](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202282001696.png)
+
+- 算法主体：
+  - [demo](https://docs.google.com/presentation/d/1_bw2z1ggUkquPdhl7gwdVBoTaoJmaZdpkV6MoAgxlJc/pub?start=false&loop=false&delayms=3000)
+  - 访问节点的时候进行的是距离优先访问，最先访问距离最小的节点。使用优先队列。
+  - 对于当前访问的节点V，调整所有从V指出的路径。
+  - ![image-20220228213339591](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202282133760.png)
+  - 伪代码：在不存在负数权值的路径的情况下是正确的。
+  - ![image-20220228230022369](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202282300560.png)
+  - 复杂度：
+  - ![image-20220228230152252](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202282301413.png)
+
+- <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202282302576.png" alt="image-20220228230225437"  />
+
+
+
+
+
+- 对于一个终点明确的最短路径问题来说，Dijkstra能给出正确的回答，但是它的效率不够高。
+
+  - 可以这么想：Dijkstra是以起点为中心的圆周扩散寻找最近点的，而对于终点明确的最短路径来说，只需要往靠终点近的那边就可(A*）。
+
+  - 这是Dijkstra：
+
+    - ###### <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202282313667.png" alt="image-20220228231312512" style="zoom: 50%;" />
+
+- 引出A*：
+
+  - 在访问节点时仍然是最近优先访问，只不过这个最近的定义是：**从起点到点V的距离加上点V到终点的距离最近。**(Dijkstra是起点到点V的距离)
+  - 这个从点V到终点的距离由估算函数h给出：根据已有经验来估算。
+    - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202282309164.png" alt="image-20220228230950023" style="zoom:67%;" />
+  - ![image-20220228230627398](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202282306582.png)
+  - 这是A*：http://qiao.github.io/PathFinding.js/visual/
+    - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202202282315566.png" alt="image-20220228231506427" style="zoom: 67%;" />
+
+
+
+[不同路径算法的在线可视化网站](http://qiao.github.io/PathFinding.js/visual/)
+
+# Lecture 24 Minimum Spanning Trees
+
+- **最开头有一个warmup。关于如何确定图中是否有环。对第二个算法来说很重要。**
+
+- 最小生成树：将无向有权图的所有节点都连接在一起，并且使得总权值最小的树。
+  - 应用：将各个家庭使用电线连接在一起使得每一家都能通电，这时就要选择总电线最短的连接方式，这种方式就是最小生成树。
+  - 无环。
+  - 连通。
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203012115594.png" alt="image-20220301211504422" style="zoom:67%;" />
+
+- 最小生成树和最短路径树的对比：
+  - 最小生成树没有起点一说，是一个全局的属性，而最短路径树则是与起点相关。
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203012332886.png" alt="image-20220301233247743" style="zoom:67%;" />
+  - 某个起点的最短路径树也可能恰恰是整个图的最小生成树。
+    - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203012333411.png" alt="image-20220301233353288" style="zoom:67%;" />
+    - 所以这提示我们一种求最小生成树的方法：我们找到这个特殊的节点，然后以这个节点作为起点求它的最短路径树，得到的就是最小生成树。**但是这种方法实际上是不可行的，反例：**
+    - ![image-20220301234022037](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203012356445.png)
+
+- Cut Property：
+  - Cut：将图的节点分成两个非空集合。
+  - Crossing Edge：两个断点分别在两个集合的边。
+  - Cut Property：给定任意一个分割，Crossing Edge中权值最小的那一条一定是属于最小生成树。
+    - 证明：![image-20220302152816988](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203021528135.png)
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203021526312.png" alt="image-20220302152616097" style="zoom:80%;" />
+
+- 根据Cut Property引出最基本的最小生成树算法：
+  - 最开始最小生成树中没有边。
+  - 找到一个分割，这个分割的crossing edge都不在最小生成树中。
+  - 将这个分割里的权值最小的边加入最小生成树中。
+  - 重复直到最小生成树中有V - 1条边。
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203021529889.png" alt="image-20220302152944755" style="zoom:80%;" />
+- <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022108088.png" alt="image-20220302210828947" style="zoom:80%;" />
+  - 其实是Cut Property的特殊情况的应用。
+    - 任意取一个点作为起点（将它单独成集合，其他点成另外一个集合），选取与之相连的（也就是crossing edge）权值最小的边，这就是MST的第一条边。
+    - MST的第一条边连接起来的两个节点构成一个集合，其他点构成另外一个集合，选取第二个集合的crossing edge中权值最小的，得到第二条边。
+    - 本质上就是，在构造的过程中，不完整的MST的边将所有的点分成了两个集合，一个集合是已经在MST中的点，另外一个就是其他点。
+    - 重复这个过程直到得到V - 1条MST边。
+  - [demo](https://docs.google.com/presentation/d/1NFLbVeCuhhaZAM1z3s9zIYGGnhT4M4PWwAc-TLmCJjc/edit#slide=id.g9a60b2f52_0_0)<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022116661.png" alt="image-20220302211648499" style="zoom:80%;" />
+  - 实际的实现：[demo](https://docs.google.com/presentation/d/1GPizbySYMsUhnXSXKvbqV4UhPCvrt750MiqPPgU-eCY/edit#slide=id.g9a60b2f52_0_0)
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022137899.png" alt="image-20220302213719741" style="zoom:80%;" />
+  - 与最短路径算法对比：<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022143631.png" alt="image-20220302214301474" style="zoom:80%;" />
+  - 伪代码：
+    - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022143048.png" alt="image-20220302214339903" style="zoom:67%;" />
+    - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022143034.png" alt="image-20220302214352876" style="zoom:67%;" />
+  - Runtime：<img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022144305.png" alt="image-20220302214453148" style="zoom: 67%;" />
+
+
+
+- <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022145499.png" alt="image-20220302214541372" style="zoom:67%;" />
+  - 其实是Cut Property的伪装。
+    - [kruskals conceptual demo](https://docs.google.com/presentation/d/1RhRSYs9Jbc335P24p7vR-6PLXZUl-1EmeDtqieL9ad8/edit?usp=sharing)
+    - [kruskals realistic implementation demo](https://docs.google.com/presentation/d/1KpNiR7aLIEG9sm7HgX29nvf3yLD8_vdQEPa0ktQfuYc/edit?usp=sharing)
+  - 将所有的边按权重排好序，从小到大考虑每条边。
+  - 对于正在考虑的边E，如果加入E到最小生成树中不会导致树中成环，就加入E，否则抛弃E。
+  - <img src="https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022155467.png" alt="image-20220302215525308" style="zoom:80%;" />
+  - Runtime![image-20220302224109048](https://raw.githubusercontent.com/CorneliaStreet1/PictureBed/master/202203022241213.png)
+
+
+
+
+
+
+
+
+
+# Lecture 25 Range Searching and Multi-Dimensional Data
 
 
 
