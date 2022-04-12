@@ -1159,8 +1159,20 @@ public class StringLengthComparator implements Comparator<String> {
 ### 6.2.1 为什么引入lambda表达式
 
 - lambda表达式是一个可传递的代码块，可以在以后执行一次或多次。
+- Java想要直接传递一个代码块并不容易，你必须先构造一个对象，这个对象的类要有一个方法包含你需要的那些代码。
+- 引入lambda表达式，就是为了能够直接传递一个代码块。
 
 ### 6.2.2 lambda表达式的语法
+
+- 语法的具体解析：
+  - 一个圆括号，表示这一块代码块是一个函数，或者说，方法。
+  - 这个圆括号中存放着方法所需要的参数列表。没有参数也需要圆括号。
+  - 花括号中是代码块本体。
+  - 我们使用一个箭头来连接本体和圆括号。
+  - 我们可以不需要显式的`return`，编译器会自动推断出函数的返回值。
+  - 无需指定表达式的返回类型，因为编译器会自动推断。
+  - 可以有显式的`return`。
+  - 如果圆括号内只有一个参数，而且这个参数的类型可以推导得出，甚至可以不需要圆括号。
 
 - lambda表达式就是代码块以及必须传入代码的变量规范。
 
@@ -1213,13 +1225,59 @@ ActionListener ls = event -> System.out.println("");
 ### 6.2.3 函数式接口
 
 - lambda表达式与封装代码的接口是兼容的。
-- 对于只有一个抽象方法的接口，需要指针接口的对象时，可以提供一个lambda表达式。这种接口称为函数式接口。
+- 接口分为三类：
+  - 普通的接口(`normal interface`)：接口中含有多个方法的
+  - 函数式接口(`functional interface`)：接口中**只有一个抽象方法**
+  - 标签式接口(`tagging interface`)：接口中没有方法的，比如`Serializable`
+
+- 对于只有一个抽象方法的接口，需要这种接口的对象时，可以提供一个lambda表达式。这种接口称为函数式接口。
   - 比如`Comparator`接口。就只有一个抽象方法。
+  - 需要一个比较器对象时，就可以提供一个`lambda`表达式来代替一个比较器对象，这个表达式就包含了`compare()`的具体实现
+  - 把这个`lambda`表达式传递给其他函数，调用`compare()`时就会执行`lambda`表达式的体
 
 ```java
 //
 Arrays.sort(strings ,  (first, second) ->first.length() - second.length())
 ```
+
+### 6.2.4 方法引用
+
+- 只有当`lambda`表达式的体只调用一个方法而不做其他操作时，才能把`lambda`表达式重写为方法引用。
+
+  - ```java
+    () -> s.length() == 0;
+    //不能重写为方法引用
+    ```
+
+- 可以在方法引用中使用`this`和`super`
+
+- 用`::`运算符分隔方法名与对象或类名。
+
+  - `object :: instanceMethod`：等价于向方法传递参数的`lambda`表达式
+
+  - `Class :: instanceMethod`：第一个参数会成为方法的隐式参数
+
+    - ```java
+      String::compareToIgnoreCase();
+      (String x, String y) -> x.compareToIgnoreCase(y);
+      ```
+
+  - `Class :: staticMethod`：所有参数都传递给静态方法
+
+    - ```java
+      Math :: pow
+      (x, y) -> Math.pow(x, y);
+      ```
+
+      
+
+### 6.2.5 构造器引用
+
+```java
+Class :: new;
+```
+
+
 
 ## 6.3 内部类
 
@@ -1463,7 +1521,8 @@ catch (ExceptionType e) {
 
 ```java
 /**
-*read()可能会抛出IO异常
+*read(String filename)可能会抛出IO异常
+*这个IO异常是你不知道如何处理的，你决定交给调用read(String filename)的人去处理
 *将抛出的异常继续传递下去，传递给调用者。
 */
 public void read(String filenname) throws IOException
@@ -1482,7 +1541,7 @@ public void read(String filenname) throws IOException
   - 想传播一个异常，必须在方法首部添加`throws`说明符，提醒调用者这个方法可能抛出一个异常。
   - 查看API文档得知API可能抛出的异常。然后再决定是直接处理还是继续传递。
 
-- **如果编写的方法覆盖了超类的一个方法，而这个超类方法没有抛出异常，你就必须捕获你的方法代码中出现的每一个检查型异常。**
+- **如果编写的方法覆盖了超类的一个方法，而这个超类方法没有抛出异常，所以你也不能抛出异常，所以你就必须捕获你的方法代码中出现的每一个检查型异常。**
 - 不允许在子类方法的`throws`说明符中出现超类方法未列出的异常。
 
 
@@ -1564,12 +1623,20 @@ Throwable oringal = caughtException.getCause();
 - 也可以捕获一个异常并记录之后直接抛出。
 
 ```java
-try {
-    .....;//访问数据库
-}
-catch (SQLException e) {
-    logger.log(lever,message,e);
-    throw e;
+public void update() throws SQLException {
+    try {
+        .....;//访问数据库
+    }
+/**
+*编译器会查看throw语句，发现这里抛出的是Exception，但是声明函数抛出的是SQLException
+*于是编译器会往上查看对应的try语句。、
+*如果try块中抛出的异常确实只有SQLException，并且在catch语句中被捕获的异常没有被改变
+*将外围方法声明为抛出SQLException就是合法的
+*/
+   catch (Exception e) { 
+        logger.log(lever,message,e);
+        throw e;
+    }
 }
 ```
 
@@ -1578,12 +1645,13 @@ catch (SQLException e) {
 - `finally`子句存在的意义：
   - 代码抛出一个异常时，就会停止处理这个方法中剩余的代码，并退出这个方法。如果这个方法已经获得了一些只有它自己知道的本地资源，而且这些资源必须清理，那就会存在没办法清理的问题。
   - `finally`可以解决这个问题。
-  - 不管是否有异常被捕获，所有情况下`finally`子句中的代码都会被执行。
+- **不管是否有异常被捕获**，**所有情况下`finally`子句中的代码都会被执行。**
   - `try`语句可以没有`catch`子句，只有`finally`子句。
   - `finally`语句会在抛出未被捕获的异常之前执行。
   - `finally`语句会在捕获异常之后执行。
-
-- **不要把改变控制流的语句(`return throw break continue`)放入``finally子句中，会造成意想不到的后果，比如返回值遮蔽。**
+  - **总之就是，不管什么情况，一定会执行`finally`中的语句**
+- `try`可以没有`catch`而只有`finally`
+- **不要把改变控制流的语句(`return throw break continue`)放入`finally`子句中，会造成意想不到的后果，比如返回值遮蔽。**
 
 ### 7.2.5 try-with-Resources 语句
 
@@ -1635,7 +1703,11 @@ catch (SQLException e) {
 
 ### 8.1.1 类型参数的好处
 
-- 一堆好处
+- 使用Object来编写泛型程序的时候，没有办法做类型检查。
+  - 比如向一个存满了String的Object数组中放非String类型。
+  - 这段代码本身可以通过编译，但是运行的时候会在别的地方出错，比如要获取一个String的时候，给了一个其他类型。
+
+- 获取值的时候，使用类型参数的时候不需要进行强制类型转换，而使用Object编写泛型的时候需要强制类型转换。
 
 
 
@@ -1754,8 +1826,9 @@ class e {
 
 - `T`和限定类型可以是接口也可以是类。
 - `T`应该是限定类型的子类型。
+- **一个类型变量或通配符可以有多个限定。**
 - 限定类型用`&`分割，类型变量用逗号分割。
-- 最多只能有一个类作为限定，可以有多个接口。类作为限定之一必须放限定列表第一位。
+- 可以有多个接口作为超类型，但是最多只有一个类作为限定。如果一个类作为限定，它必须是限定列表中的第一个限定。
 
 ```java
 <T extends BoundType>
@@ -1768,11 +1841,11 @@ class e {
 
 ### 8.5.1 类型擦除
 
-- 无论何时定义一个泛型类型，都会自动提供一个相应的原始类型。这个原始类型名会替换掉原来的类型变量。
+- 无论何时定义一个泛型类型，都会自动提供一个相应的原始类型。这个原始类型的名字就是去掉类型参数之后的泛型类型名。
 
-  - 类型变量会被擦除并替换为其限定类型，无限定的变量则替换为`Object`。
-
-  - 原始类型用**第一个限定**来替换类型变量，如果没有显式给定限定类型，就替换为`Object`。
+- **类型变量会被擦除**并替换为其限定类型，无限定的变量则替换为`Object`。
+- 原始类型用**第一个限定**来替换类型变量，如果没有显式给定限定类型，就替换为`Object`。
+- **应该将标签接口（即没有方法的接口，如可序列化）放在限定列表的最后，这样可以提高效率。**
 
 ```java
 /**
@@ -1824,6 +1897,7 @@ public class Pair<T extends  Comparable & Serializable> implements Serializable 
 }
 /**
 *原始类型
+*可以发现各处的T都被替换成了第一个限定Comparable
 */
 public class Pair implements Serializable {
     private Comparable first;
@@ -1842,6 +1916,9 @@ public class Pair implements Serializable {
 ### 8.5.2 转换泛型表达式
 
 - 编写一个泛型方法调用时，如果擦除了返回类型，编译器会插入强制类型转换。
+  - 比如类型参数没有任何限定，被擦除为`Object`的情况下。
+  - 编译器会将`Object`类型的返回值强制转换为对应的类型。 
+
 - 访问一个泛型字段时也会插入强制类型转换。
 
 
@@ -1864,9 +1941,11 @@ public static  Comparable min(Comparable[] a)
 
 - 所有的类型参数都会替换为它们的限定类型。
 - 会合成桥方法来保持多态。
+- **一个方法覆盖另一个方法时，可以指定一个更严格的返回类型，这是合法的。**
 
 ### 8.5.4 调用遗留代码
 
+- 在有把握编译器发出警告的代码是正确的情况下，使用注解关闭代码检查
 
 
 ## 8.6 限制与局限性
@@ -1876,27 +1955,42 @@ public static  Comparable min(Comparable[] a)
 ### 8.6.1 不能用基本类型实例化类型参数
 
 - 不能使用基本类型来代替类型参数。
+  - 原因是类型擦除，被擦除后的原始类含有`Object`，而`Object`不能存储基本类型。
   - 但是有包装器。
   - 基本类型只有八种，可以用单独的类和方法来处理，并不是一个很大的缺陷。
+
 
 ### 8.6.2 运行时类型查询只适用于原始类型
 
 - 虚拟机中的对象总有一个特定的非泛型类型。因此所有的类型查询只产生原始类型。
+- 试图查询一个对象是否属于某个泛型类型时，会得到编译器错误或警告。
 
 ```java
 /**下列仅仅测试a是否是一个任意类型的Pair
+*等价于 if (a instanceof Pair<Object>)
 *而不是测试a是否是T类型的Pair
 */
-if (a instanceof Pair<T>)
-if (a instanceof Pair<String>)
+if (a instanceof Pair<T>) // 
+if (a instanceof Pair<String>) 
 Pair<String> p = (Pari<String>)a;
 ```
 
 - `getClass()`也总是返回原始类型。
 
+  - 返回的类型都是擦除之后，不带任何类型参数的。
+
+  ```java
+  Pair<String>.getClass().equals(Pair<Integer>).getClass()); //返回值是true，因为getClass()返回的是Pair.class
+  ```
+
+  
+
 ### 8.6.3 不能创建参数化类型的数组
 
 - 不能实例化参数化类型的数组
+  - 因为类型擦除之后，这个数组实际上是`Object[]`。
+  - 会导致数组的类型检查失效。
+
 
 ```java
 /**
@@ -1916,9 +2010,63 @@ Pair<String>[] table;
 
 ### 8.6.5 不能实例化类型变量
 
-**实在是看不懂也看不动了，先看下一章吧**
+```java
+/**
+*不能new T
+*/
+new T;
+//相当于
+    new Object;
+```
 
-## 第9章 集合
+
+
+## 8.8通配符类型
+
+### 8.8.1 通配符概念
+
+- 通配符类型中，类型参数允许发生变化。
+
+```java
+//表示类型参数是Employee的任何子类
+Pair<? extends Employee>
+Pair<Manager> //为Pair<? extends Employee>的子类型
+Pair<Manager> PM = new Pair<Manager>(ceo, cfo);
+Pair<? extends Employee> PE = PM // 可以，因为右边是左边的子类
+```
+
+- 使用通配符来做子类限定，不能将通配符作为函数的参数，但是可以作为返回值
+
+  - 作为参数没办法进行匹配，只知道需要的是子类型，但是不知道需要具体的哪一个类型。
+
+- ```java
+  public ? extends Employee getFirst();//可以
+  public void setFirst(?extends Employee )//不可以
+  ```
+
+### 8.8.2 通配符的超类型限定
+
+- 可以为方法提供参数，但是不能作为返回值。
+
+```java
+? super Manager;//限定为Manager的所有超类型
+```
+
+### 8.8.3 无限定通配符
+
+```java
+Pair<?> //有如下方法
+    ? getFirst() //返回值只能被赋给一个Object
+    void setFirst(?) //不能被调用，Object也调用不了
+```
+
+- 可以用任意的`Object`对象调用原始`Pair`类的方法
+
+### 8.3.4 通配符捕获
+
+- 通配符不是类型变量，不能将`?`作为一种类型。
+
+# 第9章 集合
 
 - 仅介绍如何使用标准库中的集合
 
@@ -2059,3 +2207,198 @@ V get(K key);
 - 映射是将值映射到键。
 - 要想检索一个对象，**必须使用键**。
 - 键必须是唯一的，不能对同一个键存放两个值。
+
+
+
+
+
+# 第12章 并发
+
+- 并发执行的进程数目并不受限于CPU的数目。
+- 多线程程序在更低一层扩展了多任务的概念：单个程序看起来在同时完成多个任务。每个任务在一个线程中执行。
+- 线程共享数据，而每个进程都有自己一整套的变量。
+- 线程间通信比进程间通信开销小。
+
+## 12.1 什么是线程
+
+- 在单独的一个线程中运行任务的简单过程：
+  - 建立一个类，这个类要实现`Runnable`接口，或者使用`lambda`表达式
+  
+  - ```java
+    public class MyThread implements Runnable {
+        private int ID;
+        public MyThread(int ThreadId) {
+            ID = ThreadId;
+        }
+        @Override
+        public void run() {
+            for (int i = 0 ; i < 10 ; i ++) {
+                System.out.println("Thread " + ID + " " + i);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    ```
+  
+  - ```java
+    public class ThreadTest {
+        public static void main(String[] args) {
+            Runnable myThread1 = () -> {
+                for (int i = 0 ; i < 10 ; i ++) {
+                    System.out.println("Thread "+ "1 " + i);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            Runnable myThread2 = () -> {
+                for (int i = 0 ; i < 10 ; i ++) {
+                    System.out.println("Thread "+ "2 " + i);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            Thread thread1 = new Thread(myThread1);
+            Thread thread2 = new Thread(myThread2);
+            thread1.start();
+            thread2.start();
+        }
+    }
+    ```
+  
+  - 用这个`Runnable`构造一个`Thread`对象。启动线程。
+  
+  - ```java
+    public class ThreadTest {
+        public static void main(String[] args) {
+            MyThread myThread1 = new MyThread(1);
+            MyThread myThread2 = new MyThread(2);
+            Thread thread1 = new Thread(myThread1);
+            Thread thread2 = new Thread(myThread2);
+            thread1.start();
+            thread2.start();
+        }
+    }
+    ```
+  
+  - **不要调用`Thread`类或`Runnable`类的`run()`方法**，这样是只会在同一个线程中执行这个任务，不会启动新的线程。
+  
+    ```java
+    Runnable r = () -> {
+        .....codes;
+    }
+    Thread t = new Thread(r);
+    t.start();
+    ```
+  
+- 第二种方法：
+
+  - 建立一个类，这个类扩展`Thread`，作为`Thread`的子类
+
+  - ```java
+    public class MyThread extends Thread {
+        private int ID;
+        public MyThread(int ThreadId) {
+            ID = ThreadId;
+        }
+        @Override
+        public void run() {
+            for (int i = 0 ; i < 10 ; i ++) {
+                System.out.println("Thread " + ID + " " + i);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    ```
+
+  - 在这个类中实现`run()`。
+
+  - 利用这个类的对象调用`start()`
+
+  - ```java
+    public class ThreadTest {
+        public static void main(String[] args) {
+            MyThread myThread1 = new MyThread(1);
+            MyThread myThread2 = new MyThread(2);
+            myThread1.start();
+            myThread2.start();
+        }
+    }
+    ```
+
+    
+
+
+
+
+
+
+
+
+
+## 12.2 线程状态
+
+- 线程的六种状态：使用`getState()`方法得到
+  - New（新建）
+  - Runnable（可运行）
+  - Blocked（阻塞）
+  - Waiting（等待）
+  - Timed Waiting（计时等待）
+  - Terminated（终止）
+
+### 12.2.1 新建线程
+
+- 当使用`new`操作符创建一个新线程时，这个线程还没有开始运行。它的状态是新建。
+- 处于新建状态的线程，程序还没有开始运行线程中的代码。
+- 在线程运行之前还有一些基础工作要做
+
+
+
+### 12.2.2 可运行线程
+
+- 一旦调用`ThreadObject.start()`方法，线程就处于可运行状态。
+- **任何给定时刻，处于可运行状态的线程，可能正在运行，也可能没有运行。要由操作系统为线程提供时间片。**
+- 一旦一个线程开始运行，它不一定始终保持运行。线程调度的细节依赖于操作系统提供的服务。
+- 运行中的线程有时需要暂停下来，让其他线程有机会运行。
+- 抢占式调度系统给每个线程一个时间片来执行任务，时间片用完，操作系统就剥夺该线程的运行权并分配给其他线程。
+- 在有多个处理器的机器上，线程数目小于处理器数目时（否则还是要分配时间片），多个线程可以并行运行，每个处理器运行一个线程。
+
+
+
+### 12.2.3 阻塞和等待线程
+
+- 处于阻塞和等待状态的线程，不运行任何代码，消耗最少的资源。要由线程调度器来重新激活这个线程。
+- 当一个线程试图获取一个内部的对象锁，而这个对象锁目前被其他线程占有，该线程就会被阻塞。当所有其他线程都释放了这个锁，并且线程调度器允许该线程持有这个锁时，该线程变成非阻塞状态。
+- 当线程等待另一个线程通知调度器出现一个条件时，这个线程会进入等待状态。
+- 调用有超时参数的方法时，线程进入计时等待状态，这一状态一直保持到超时或者接收到适当通知。
+
+
+
+### 12.2.4 终止线程
+
+- `run()`方法正常退出，线程自然终止。
+- 因为一个没有捕获的异常终止了`run()`方法，使线程意外终止。
+
+
+
+
+
+
+
+## 12.3 线程属性
+
+### 12.3.1 中断线程
+
